@@ -1,0 +1,40 @@
+---
+- name: Get inventory via NETCONF
+  hosts: all
+  gather_facts: no
+  #connection: ansible.netcommon.netconf
+  vars:
+    ansible_user: test
+    ansible_ssh_pass: test
+    ansible_network_os: cisco.ios.ios
+    ansible_connection: ansible.netcommon.netconf	
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_port: 22
+
+  tasks:
+
+    - name: Get Config from device
+      vars:
+        show_commands:
+          - version
+          - inventory
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - name: Show getConfiguration as list
+      debug:
+        msg: "{{ netconfrpc_result.stdout }}"
+
+    - name: Show interfaces
+      debug:
+        msg: "{{ netconfrpc_result.interfaces }}"
+
+
+    - name: Show result of show commands if any
+      debug:
+        msg:
+          - "Command: {{ item.key }}"
+          - "Result: {{ item.value }}"
+      loop: "{{ netconfrpc_result.show_result | dict2items }}"
+      when: netconfrpc_result.show_result is defined

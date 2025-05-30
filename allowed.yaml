@@ -1,0 +1,77 @@
+---
+- name: Get inventory via NETCONF
+  hosts: all
+  gather_facts: no
+  #connection: ansible.netcommon.netconf
+  vars:
+    ansible_user: test
+    ansible_ssh_pass: test
+    ansible_network_os: cisco.ios.ios
+    ansible_connection: ansible.netcommon.netconf	
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_port: 22
+
+    #pattern: '^(snmp-server community \w+).*$'
+    pattern: '^(username \w+).*$'
+    allowed:
+      - username test
+
+  tasks:
+
+   
+
+    - name: config
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - name: Pring retrieved config
+      set_fact:
+        full_config: "{{ netconfrpc_result.stdout_lines }}"
+
+
+  # radius server ISE1
+  # address ipv4 10.1.1.1 auth-port 1812 acct-port 1813
+  # radius server ISE2
+  # address ipv4 20.1.1.1 auth-port 1812 acct-port 1813
+  # radius server Legacy_Unix1
+  # address ipv4 30.1.1.1 auth-port 1812 acct-port 1813
+  # radius server Legacy_Unix2
+  # address ipv4 40.1.1.1 auth-port 1812 acct-port 1813
+
+    - name: Make sure only our allowed radius server are configured!
+      vars:
+        allowed:
+          - radius server ISE1
+          - radius server ISE2
+        pattern: '^(radius server \w+)$'
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/allowedConfig
+
+    # All other users except from ADMIN, Cisco and test will be removed.
+    - name: Make sure only our allowed radius server are configured!
+      vars:
+        allowed:
+          - username ADMIN
+          - username Cisco
+          - username test
+        pattern: '^(username \w+)$'
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/allowedConfig
+
+
+    # configure any snmp v2 community 
+    # snmp-server community secret RO
+    # It will be removed next time you run the playbook
+    - name: Remove all snmp v2 configurations
+      vars:
+        pattern: '^(snmp-server community \w+).*$'
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/allowedConfig
+

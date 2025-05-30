@@ -1,0 +1,37 @@
+
+    # - name: Get hardware inventory data
+    #   ansible.netcommon.netconf_get:
+    #     #filter_type: subtree
+    #     display: pretty
+    #     filter: <device-hardware-data xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-device-hardware-oper" />
+    #   register: inventory_output
+
+    # - name: Pass text and parse with xml
+    #   ansible.utils.cli_parse:
+    #     text: "{{ inventory_output.output }}"
+    #     parser:
+    #       name: ansible.utils.xml
+    #   register: output
+
+    # - debug:
+    #     msg:
+    #       #- "{{ output.parsed.data['device-hardware-data']['device-hardware']['device-inventory'] }}"
+    #       - "{{ output.parsed }}"
+
+    
+    # - name: Get Config via Netconf-RPC -> Funktioniert
+    #   ansible.netcommon.netconf_get:
+    #     source: running
+    #   register: output_inter
+
+
+    # - name: Show Version -> Funktioniert
+    #   ansible.netcommon.netconf_rpc:
+    #     rpc: get
+    #     content: |
+    #       <filter>
+    #         <oper-data-format-text-block>
+    #         <show>version</show>
+    #         </oper-data-format-text-block>
+    #       </filter>
+    #   register: output_rpc

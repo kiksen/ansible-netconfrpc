@@ -1,0 +1,52 @@
+---
+argument_specs:
+  main:
+    short_description: netconf-globalConfig
+    description:
+      - Send global config commands to the device.
+    author:
+      - Christian Knoblauch
+    options:
+
+      before:
+        type: list
+        elements: str
+        required: false
+        description: >
+          A list of commands which are send to the device, but not used for checks if intended_config is reached
+
+      intended_config:
+        type: list
+        elements: str
+        required: false
+        description: >
+          A list of commands which are send to the device. If a command of the list is missing config will be send
+
+      default_config:
+        type: list
+        elements: str
+        required: false
+        description: >
+          A list of commands which are not visible in the final configuration. You can use this list for default commands or to remove things
+
+      current_config:
+        type: list
+        elements: str
+        required: true
+        description: >
+          your current complete device config as string, which is used to determin the intended configuration
+
+      unwanted_config:
+        type: list
+        elements: str
+        required: true
+        description: >
+          if unwanted_config is found in the current_config the execution is triggered
+
+
+      debug:
+        type: bool
+        required: false
+        default: false
+        description: >
+          Print more information when executing

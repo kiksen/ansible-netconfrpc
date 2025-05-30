@@ -1,0 +1,33 @@
+---
+argument_specs:
+  main:
+    short_description: netconf-getConfiguration
+    description:
+      - Retrieve complete device configuration.
+        These role will get the complete device configuration.
+        netconfrpc_result will be set as a result. 
+      - It is possible to add a list of show commands which are retrieved in one request from the switch. The result will be stored in show_result
+    author:
+      - Christian Knoblauch
+
+    options:
+      type:
+        type: str
+        required: false
+        default: running
+        choices:
+          - running
+          - derived
+          - startup
+        description: output parsed result
+      show_commands:
+        type: list
+        elements: str
+        required: false
+        default: []
+        description: A list of show commands. Only the thing you want to show like 'version' or 'inventory'
+      debug:
+        type: bool
+        required: false
+        default: false
+        description: output parsed result

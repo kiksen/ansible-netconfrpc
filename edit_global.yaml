@@ -1,0 +1,52 @@
+---
+- name: Get inventory via NETCONF
+  hosts: all
+  gather_facts: no
+  #connection: ansible.netcommon.netconf
+  vars:
+    ansible_user: test
+    ansible_ssh_pass: test
+    ansible_network_os: cisco.ios.ios
+    ansible_connection: ansible.netcommon.netconf	
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_port: 22
+
+
+  tasks:
+
+
+
+    - name: Get running configuration
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - set_fact:
+        full_config: "{{ netconfrpc_result.stdout_lines }}"
+
+
+    - name: Send configuration lines to device
+      vars:
+        intended_config:
+          - snmp-server community insecure RO
+          - hostname netconfIsCoolxxx
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/globalConfig
+
+    - name: Make sure some config is not present!
+      vars:
+        default_config:
+          - no ip access-list standard 3
+        unwanted_config:
+          - ip access-list standard 3
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/globalConfig
+
+
+
+
+

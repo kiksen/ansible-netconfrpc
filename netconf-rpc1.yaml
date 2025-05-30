@@ -1,0 +1,54 @@
+---
+- name: Get inventory via NETCONF
+  hosts: all
+  gather_facts: no
+  #connection: ansible.netcommon.netconf
+  vars:
+    ansible_user: test
+    ansible_ssh_pass: test
+    ansible_network_os: cisco.ios.ios
+    ansible_connection: ansible.netcommon.netconf	
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_port: 22
+
+    #pattern: '^(snmp-server community \w+).*$'
+    pattern: '^(username \w+).*$'
+    allowed:
+      - username test
+
+    # radius_pattern: '^(radius server \w+)$'
+    # radius_allowed:
+    #   - radius server TEST
+    #   - radius server HUGO
+
+  tasks:
+
+   
+
+    - name: config
+      vars:
+        debug: true
+        # show_commands:
+        #   - version
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - set_fact:
+        full_config: "{{ netconfrpc_result.stdout }}"
+
+
+    - name: Send config to device
+      vars:
+        start_block: ip access-list standard MGMTX
+        end_block: '!'
+        before: no ip access-list standard MGMTX
+        intended_config:
+          - 10 permit 10.1.1.0 0.0.0.255
+          - 20 permit 20.1.1.1
+          - 40 remark TEST1
+        #default_config: []
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/blockConfig

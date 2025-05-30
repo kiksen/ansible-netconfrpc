@@ -1,0 +1,81 @@
+---
+
+- name: config
+  copy:
+    dest: "/mnt/e/Ansible/config.txt"
+    content: "{{ current_config }}"
+
+
+- set_fact:
+    expression: "(?<={{ start_block }}\n)(.*\n)*?{{ end_block }}\n"
+
+- debug:
+    msg:
+      - "{{ start_block }}"
+      - "{{ end_block }}"
+      - "{{ expression }}"
+
+# + end am Ende, weil show running | s interfaces kein ! oder end am Ende hat
+# ?=(interface|end|!) holt den Inhalt bis zum nächsten interface, end oder ! am Ende. Die ! werden gebraucht wenn man die komplette config zieht.
+- name: Parse block configuration ()
+  set_fact:
+    block_config: "{{ current_config | regex_search( expression, ignorecase=True) | trim | trim('!') | split('\n') | map('trim') | select() }}"
+
+- name: Current config found for block_config
+  debug:
+    msg: 
+      - "{{ block_config }}"
+  when: debug
+
+- name: check if config is different
+  set_fact:
+    diff_c_to_i: "{{ block_config | difference(intended_config) }}"
+    diff_i_to_c: "{{ intended_config | difference(block_config) }}"
+
+- name: Debug diff
+  debug: 
+    msg:
+      - Current to intended config
+      - "{{ diff_c_to_i }}"
+      - Intended to current config
+      - "{{ diff_i_to_c }}"
+  when: debug | bool == true
+
+
+
+- name: prepare push_stack = before + start_block + intended_config + default_config
+  set_fact:
+    push_stack: "{{ [ before ] + [ start_block ] + intended_config + default_config }}"
+
+- name: debug push_stack
+  debug:
+    msg: "{{ push_stack }}"
+  when: debug | bool == true
+
+- name: Send push_stack to device
+  when:
+    - (diff_i_to_c|length != 0) or (diff_c_to_i|length != 0)
+    - ansible_check_mode == false
+  register: result_conf
+  changed_when: true
+  notify: write running configuration
+  ansible.netcommon.netconf_rpc:
+    rpc: edit-config
+    content: |
+      <target>
+      <running/>
+      </target>
+        <config>
+        <cli-config-data>
+        {% for cmd in push_stack %}
+        <cmd>{{ cmd }}</cmd>
+        {% endfor %}
+        </cli-config-data>
+        </config>      
+  register: output
+
+- name: debug edit-config output
+  debug:
+    msg: "{{ output }}"
+  when: debug | bool == true
+

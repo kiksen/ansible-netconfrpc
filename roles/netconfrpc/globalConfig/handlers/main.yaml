@@ -1,0 +1,8 @@
+- name: Write running config
+  ansible.netcommon.netconf_rpc:
+          rpc: copy-config
+          content: |
+            <source><running/></source>
+            <target>
+              <startup/>
+            </target>

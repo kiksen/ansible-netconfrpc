@@ -1,0 +1,11 @@
+---
+- name: Write Memory - Write config to startup config
+  register: result
+  when: ansible_check_mode == False
+  ansible.netcommon.netconf_rpc:
+    rpc: copy-config
+    content: |
+      <source><running/></source>
+      <target>
+        <startup/>
+      </target>

@@ -1,0 +1,71 @@
+---
+
+# - name: saving config to file config.txt
+#   copy:
+#     dest: "/mnt/e/Ansible/config.txt"
+#     content: "{{ current_config }}"
+#   when: debug
+
+
+# + end am Ende, weil show running | s interfaces kein ! oder end am Ende hat
+# ?=(interface|end|!) holt den Inhalt bis zum nächsten interface, end oder ! am Ende. Die ! werden gebraucht wenn man die komplette config zieht.
+- name: Parse block configuration ()
+  set_fact:
+    full_config: "{{ current_config }}"
+
+- name: Current config found
+  debug:
+    msg: 
+      - "{{ full_config }}"
+  when: debug == 'true'
+
+- name: check if config is different
+  set_fact:
+    diff_i_to_c: "{{ intended_config | difference(full_config) }}"
+
+# this could be done using subset for lists, but I could not load the filter for some reason
+- name: Check for unwanted lines
+  set_fact: 
+    unwanted: "{{ unwanted | int + 1}}"
+  when: item in full_config
+  loop: "{{ unwanted_config }}"
+
+- name: Debug unwanted counter
+  debug: 
+    msg:
+      - "Unwanted counter: {{ unwanted }}"
+      - Missing lines of intended_config config
+      - "{{ diff_i_to_c}}"
+  when: debug == 'true'
+
+
+- name: prepare push_stack = before + intended_config + default_config
+  set_fact:
+    push_stack: "{{ before + intended_config + default_config }}"
+
+- name: Debug push_stack
+  debug:
+    msg: "{{ push_stack }}"
+  when: debug == 'true'
+
+- name: Send push_stack to device
+  when:
+    - (diff_i_to_c|length != 0) or (unwanted|int > 0)
+    - ansible_check_mode == False
+  register: result_conf
+  changed_when: true
+  notify: write running configuration
+  ansible.netcommon.netconf_rpc:
+    rpc: edit-config
+    content: |
+      <target>
+      <running/>
+      </target>
+        <config>
+        <cli-config-data>
+        {% for cmd in push_stack %}
+        <cmd>{{ cmd }}</cmd>
+        {% endfor %}
+        </cli-config-data>
+        </config>      
+

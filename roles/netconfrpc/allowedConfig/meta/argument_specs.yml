@@ -1,0 +1,38 @@
+---
+argument_specs:
+  main:
+    short_description: netconf-allowed config
+    description: >
+      Remove unwanted configuration like users, ntp servers or radius configs. 
+      A regex expression (pattern) is used to extract the needed portion to create a "no command" to remove the unwanted config.
+      The regex needs to have one group () which is used to build the no command. e.g. "no username Cisco". "Username Cisco" ist extraced by "^(username \w+).*$"
+      You need to match the complete line!.
+
+    author:
+      - Christian Knoblauch
+    options:
+      pattern:
+        type: str
+        required: true
+        description: >
+          reg ex pattern to build remove command.
+
+      allowed:
+        type: list
+        elements: str
+        required: true
+        description: >
+          a list of allowed items. They need to match the group match e.g. "username Cisco"
+
+      current_config:
+        type: list
+        elements: str
+        required: true
+        description: >
+          your current complete device config as string
+
+      debug:
+        type: bool
+        required: false
+        description: >
+          Print debug output

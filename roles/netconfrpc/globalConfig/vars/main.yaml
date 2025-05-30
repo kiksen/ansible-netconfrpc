@@ -1,0 +1,15 @@
+commands: []
+
+# the complete configuration file as list
+current_config: []
+
+before: []
+intended_config: []
+push_stack: []
+default_config: []
+
+# how many unwanted lines where found
+unwanted: 0
+
+# list of unwanted commands
+unwanted_config: []

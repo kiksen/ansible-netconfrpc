@@ -1,0 +1,5 @@
+# all lines which are send to the interface
+default_interface: false
+push_stack: []
+current_config: []
+name: ''

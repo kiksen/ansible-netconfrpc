@@ -1,0 +1,66 @@
+---
+- name: Edit interface configuration
+  hosts: all
+  gather_facts: no
+  
+  vars:
+    ansible_user: test
+    ansible_ssh_pass: test
+    ansible_network_os: cisco.ios.ios
+    ansible_connection: ansible.netcommon.netconf	
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_port: 22
+
+    vid: 303
+
+  tasks:
+  
+    - name: config
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - name: Pring retrieved config
+      set_fact:
+        full_config: "{{ netconfrpc_result.interfaces }}"
+
+    # - name: Set Interface Configuration
+    #   vars:
+    #     default: true
+    #     current_config: "{{ full_config }}"
+    #     name: GigabitEthernet4
+    #     intended_config:
+    #     - description Hello
+    #     - switchport access vlan {{ vid }}
+    #     - switchport mode access
+    #     - switchport nonegotiate
+    #     - negotiation auto
+    #     - no logging event link-status
+        
+    #     default_config:
+    #       - switchport trunk native vlan 1
+    #       - mop enabled
+    #       - mop sysid
+    #     debug: true
+    #   include_role:
+    #     name: netconfrpc/interface
+
+    - name: Set Interface Configuration to Trunk
+      vars:
+        default_interface: true
+        current_config: "{{ full_config }}"
+        name: GigabitEthernet4
+        intended_config:
+        - description Switch1-to-Switch2
+        - switchport mode trunk
+        - switchport trunk allowed vlan 100,200,300,{{ vid }}
+        - negotiation auto
+        
+        default_config:
+          - switchport trunk native vlan 1
+          - logging event link-status
+          - mop enabled
+          - mop sysid
+        debug: true
+      include_role:
+        name: netconfrpc/interface

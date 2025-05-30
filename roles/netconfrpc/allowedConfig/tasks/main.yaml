@@ -1,0 +1,39 @@
+- name: Build push stack
+  vars:
+    remover: "{{ item | regex_search(pattern, '\\1') }}"
+  set_fact:
+    push_stack: "{{ push_stack + ['no '+remover[0] ] }}"
+  when:
+    - item is regex(pattern)
+    - remover[0] is not in allowed
+  loop: "{{ netconfrpc_result.stdout_lines }}"
+  loop_control:
+    label: "{{ item }}"
+
+
+- name: Show push_stack
+  debug:
+    msg: "{{ push_stack }} {{ ansible_check_mode }}"
+  when: debug == 'true'
+
+
+- name: Send push_stack to device
+  when:
+    - push_stack | length > 0
+    - ansible_check_mode == False
+  register: result_conf
+  changed_when: true
+  notify: write running configuration
+  ansible.netcommon.netconf_rpc:
+    rpc: edit-config
+    content: |
+      <target>
+      <running/>
+      </target>
+        <config>
+        <cli-config-data>
+        {% for cmd in push_stack %}
+        <cmd>{{ cmd }}</cmd>
+        {% endfor %}
+        </cli-config-data>
+        </config>      

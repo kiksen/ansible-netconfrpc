@@ -1,0 +1,64 @@
+- name: Get device config and additional show commands
+  ansible.netcommon.netconf_rpc:
+    rpc: get
+    content: |
+        <filter>
+          <oper-data-format-text-block>
+          {% for command in show_commands %}
+          <show>{{ command }}</show>
+          {% endfor %}
+          </oper-data-format-text-block>
+        </filter>
+  register: output_rpc
+
+- name: convert xml to json
+  ansible.utils.cli_parse:
+    text: "{{ output_rpc.stdout }}"
+    parser:
+      name: ansible.utils.xml
+  register: output_rpc
+
+
+- name: set stdout
+  set_fact:
+    netconfrpc_result: "{{ netconfrpc_result | combine( {'stdout': output_rpc['parsed']['rpc-reply']['data']['cli-config-data-block'] }) }}"
+
+
+- name: set stdout_lines
+  set_fact:
+    netconfrpc_result: "{{ netconfrpc_result | combine( {'stdout_lines': output_rpc['parsed']['rpc-reply']['data']['cli-config-data-block'] | split('\n') }) }}"
+
+
+- name: Items as list
+  vars:
+    data: "{{ output_rpc['parsed']['rpc-reply']['data']['cli-oper-data-block']['item'] }}"
+  set_fact:
+    items: "{{ [data] if data | type_debug == 'dict' else data }}"
+  when: show_commands | length > 0
+
+
+- name: Add items to netconfrpc_result
+  vars:
+    data: "{{ items | items2dict(key_name='show', value_name='response') }}"
+  set_fact:
+    netconfrpc_result: "{{ netconfrpc_result | combine( { 'show_result': data } ) }}"
+  when: show_commands | length > 0
+
+
+- name: extract interfaces to netconfrpc_result.interfaces
+  vars:
+    data: "{{ netconfrpc_result.stdout | extract_interfaces }}"
+  set_fact:
+    netconfrpc_result: "{{ netconfrpc_result | combine( {'interfaces': data } ) }}"
+  
+  
+- name: Debug extract_interfaces
+  debug:
+    msg: "{{ netconf_result.interfaces }}"
+  when: debug == 'true' and netconf_result.interfaces is defined
+
+
+
+
+
+
