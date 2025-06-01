@@ -1,25 +1,10 @@
 ---
 
-- name: config
-  copy:
-    dest: "/mnt/e/Ansible/config.txt"
-    content: "{{ current_config }}"
 
-
-- set_fact:
-    expression: "(?<={{ start_block }}\n)(.*\n)*?{{ end_block }}\n"
-
-- debug:
-    msg:
-      - "{{ start_block }}"
-      - "{{ end_block }}"
-      - "{{ expression }}"
-
-# + end am Ende, weil show running | s interfaces kein ! oder end am Ende hat
-# ?=(interface|end|!) holt den Inhalt bis zum nächsten interface, end oder ! am Ende. Die ! werden gebraucht wenn man die komplette config zieht.
 - name: Parse block configuration ()
   set_fact:
-    block_config: "{{ current_config | regex_search( expression, ignorecase=True) | trim | trim('!') | split('\n') | map('trim') | select() }}"
+    block_config: "{{ current_config | extract_block(start_block, end_block) }}"
+
 
 - name: Current config found for block_config
   debug:
@@ -27,34 +12,45 @@
       - "{{ block_config }}"
   when: debug
 
+
 - name: check if config is different
   set_fact:
-    diff_c_to_i: "{{ block_config | difference(intended_config) }}"
-    diff_i_to_c: "{{ intended_config | difference(block_config) }}"
+    unwanted_lines: "{{ block_config | difference(intended_config) }}"
+    missing_lines: "{{ intended_config | difference(block_config) }}"
 
 - name: Debug diff
   debug: 
     msg:
-      - Current to intended config
-      - "{{ diff_c_to_i }}"
-      - Intended to current config
-      - "{{ diff_i_to_c }}"
+      - Unwanted lines in your block
+      - "{{ unwanted_lines }}"
+      - Missing lines (difference between intended and current configuration)
+      - "{{ missing_lines }}"
   when: debug | bool == true
 
+- name: set before_list if string
+  set_fact:
+    before_list: [ before ]
+  when: before | type_debug == 'AnsibleUnicode'
 
+- name: Set before type if list
+  set_fact:
+    before_list: "{{ before }}"
+  when: before | type_debug == 'list'
 
 - name: prepare push_stack = before + start_block + intended_config + default_config
   set_fact:
-    push_stack: "{{ [ before ] + [ start_block ] + intended_config + default_config }}"
+    push_stack: "{{ before + [ start_block ] + intended_config + default_config }}"
 
 - name: debug push_stack
   debug:
     msg: "{{ push_stack }}"
   when: debug | bool == true
 
+
+
 - name: Send push_stack to device
   when:
-    - (diff_i_to_c|length != 0) or (diff_c_to_i|length != 0)
+    - (missing_lines|length != 0) or (unwanted_lines|length != 0)
     - ansible_check_mode == false
   register: result_conf
   changed_when: true

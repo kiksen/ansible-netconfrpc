@@ -5,7 +5,8 @@
 class FilterModule(object):
     def filters(self):
         return {
-            'extract_interfaces': extract_interfaces
+            'extract_interfaces': extract_interfaces,
+            'extract_block': extract_block,
         }
 
 
@@ -29,3 +30,26 @@ def extract_interfaces(config_content):
                 current_interface = None
 
     return interfaces
+
+
+
+def extract_block(config_content, startblock, endblock):
+    block = []
+    blockstarted = False
+
+    if isinstance(config_content, str):
+        config_lines = config_content.splitlines()
+    else:
+        config_lines = config_content
+
+    for line in config_lines:
+
+        if line.strip() == startblock:
+            blockstarted = True
+        elif line.strip() == endblock and blockstarted:
+            blockstarted = False
+            break
+        elif blockstarted:
+            block.append( line.strip())
+
+    return block
