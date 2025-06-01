@@ -1,0 +1,50 @@
+---
+- name: Get inventory via NETCONF
+  hosts: all
+  gather_facts: no
+  #connection: ansible.netcommon.netconf
+  vars:
+    ansible_user: test
+    ansible_ssh_pass: test
+    ansible_network_os: cisco.ios.ios
+    ansible_connection: ansible.netcommon.netconf	
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_port: 22
+
+
+  tasks:
+
+
+
+    - name: Get running configuration
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - set_fact:
+        full_config: "{{ netconfrpc_result.stdout_lines }}"
+
+
+    - name: Check vlans
+      vars:
+        current_config: "{{ full_config }}"
+        debug: true
+        add_vlans:
+          - vlan_id: 100
+            name: Office
+          - vlan_id: 124
+            name: Voice_sdf
+          - vlan_id: 55
+            name: Management
+          - vlan_id: 900
+            name: Clients
+          - vlan_id: 960
+            name: Guest
+        replace: true
+        remove_vlans:
+          - 1000
+          - 200
+
+      include_role:
+        name: netconfrpc/vlans
+

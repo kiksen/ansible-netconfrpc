@@ -1,0 +1,6 @@
+# all lines which are send to the interface
+push_stack: []
+current_config: []
+remove_vlans: []
+add_vland: []
+replace: false

@@ -1,0 +1,84 @@
+---
+
+
+# + end am Ende, weil show running | s interfaces kein ! oder end am Ende hat
+# ?=(interface|end|!) holt den Inhalt bis zum nächsten interface, end oder ! am Ende. Die ! werden gebraucht wenn man die komplette config zieht.
+# - name: Get interface configuration
+#   set_fact:
+#     current_config_lines: "{{ current_config }}"
+
+
+- name: get currently configured on device
+  set_fact:
+    current_vlans: "{{ current_config | extract_vlans }}"
+
+- name: Vlans from device
+  debug:
+    msg: "{{ current_vlans }}"
+  when: debug | bool == true
+
+- name: Get vlan_ids which need to be added or changed
+  set_fact:
+    vlans_to_add: "{{ current_vlans | find_vlans_to_change(add_vlans) }}"
+
+- name: Debug Vlans to add
+  debug:
+    msg: "{{ vlans_to_add }}"
+  when: debug | bool == true
+
+- name: Get vlan_ids which need to be removed
+  set_fact:
+    vlans_to_remove: "{{ current_vlans | find_vlans_to_remove(remove_vlans) }}"
+  when: remove_vlans is defined
+
+
+- name: Get vlan_ids to remove when merge is active
+  set_fact:
+    vlans_to_remove: "{{ current_vlans | find_vlans_to_remove_merge(add_vlans)}}"
+  when:
+    - merge is defined
+    - merge | bool == true
+
+- name: Build push_stack to add or change vlans
+  vars:
+    add_vlan_command: "vlan {{ item.vlan_id }}"
+    add_vlan_name: "name {{ item.name|default(item.vlan_id+'_name') }}"
+  set_fact:
+    push_stack: "{{ push_stack + [ add_vlan_command ] + [add_vlan_name] }}"
+  loop: "{{ vlans_to_add }}"
+
+
+- name: Build push_stack to remove vlans
+  vars:
+    remove_command: "no vlan {{ item }}"
+  set_fact:
+    push_stack: "{{ push_stack + [ remove_command ] }}"
+  loop: "{{ vlans_to_remove }}"
+
+- name: Debug push_stack
+  debug:
+    msg: "{{ push_stack }}"
+  when: debug | bool == true
+
+- name: Send vlan config to device
+  when:
+    - push_stack | length > 0
+    - ansible_check_mode == False
+  register: result_conf
+  changed_when: true
+  notify: write running configuration
+  ansible.netcommon.netconf_rpc:
+    rpc: edit-config
+    content: |
+      <target>
+      <running/>
+      </target>
+        <config>
+        <cli-config-data>
+        {% for cmd in push_stack %}
+        <cmd>{{ cmd }}</cmd>
+        {% endfor %}
+        </cli-config-data>
+        </config>      
+
+
