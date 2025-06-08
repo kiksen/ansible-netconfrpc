@@ -32,12 +32,12 @@
   when: remove_vlans is defined
 
 
-- name: Get vlan_ids to remove when merge is active
+- name: Get vlan_ids to remove when replace is active
   set_fact:
-    vlans_to_remove: "{{ current_vlans | find_vlans_to_remove_merge(add_vlans)}}"
+    vlans_to_remove: "{{ current_vlans | find_vlans_to_remove_replace(add_vlans)}}"
   when:
-    - merge is defined
-    - merge | bool == true
+    - replace is defined
+    - replace | bool == true
 
 - name: Build push_stack to add or change vlans
   vars:
