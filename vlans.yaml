@@ -1,5 +1,5 @@
 ---
-- name: Get inventory via NETCONF
+- name: Edit vlans
   hosts: all
   gather_facts: no
   #connection: ansible.netcommon.netconf
