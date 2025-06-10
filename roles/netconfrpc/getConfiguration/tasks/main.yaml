@@ -57,8 +57,16 @@
     msg: "{{ netconf_result.interfaces }}"
   when: debug == 'true' and netconf_result.interfaces is defined
 
+- name: extract vlans to netconfrpc_result.vlans
+  vars:
+    data: "{{ netconfrpc_result.stdout | extract_vlans }}"
+  set_fact:
+    netconfrpc_result: "{{ netconfrpc_result | combine( {'vlans': data } ) }}"
 
-
+- name: Debug extract_vlans
+  debug:
+    msg: "{{ netconf_result.vlans }}"
+  when: debug == 'true' and netconf_result.vlans is defined
 
 
 
