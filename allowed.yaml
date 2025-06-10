@@ -12,15 +12,12 @@
     ansible_become_method: enable
     ansible_port: 22
 
-    #pattern: '^(snmp-server community \w+).*$'
     pattern: '^(username \w+).*$'
     allowed:
       - username test
 
   tasks:
-
-   
-
+  
     - name: config
       include_role:
         name: netconfrpc/getConfiguration
@@ -28,7 +25,6 @@
     - name: Pring retrieved config
       set_fact:
         full_config: "{{ netconfrpc_result.stdout_lines }}"
-
 
   # radius server ISE1
   # address ipv4 10.1.1.1 auth-port 1812 acct-port 1813
