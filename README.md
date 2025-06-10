@@ -15,7 +15,21 @@ username admin privilege 15 password test
 netconf
 ```
 
-allowed configuration
+# Roles
+
+## get configuration
+This role get the running or startup configuration of your device:
+```
+    - name: Get Config from device
+      vars:
+        show_commands: <- show commands are optional
+          - version
+          - inventory
+      include_role:
+        name: netconfrpc/getConfiguration
+```
+
+## allowed configuration
 
 block configuration
 
