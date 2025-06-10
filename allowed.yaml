@@ -2,7 +2,7 @@
 - name: Only keep allowed config lines
   hosts: all
   gather_facts: no
-  #connection: ansible.netcommon.netconf
+
   vars:
     ansible_user: test
     ansible_ssh_pass: test
@@ -64,8 +64,8 @@
         name: netconfrpc/allowedConfig
 
 
-    # configure any snmp v2 community 
-    # snmp-server community secret RO
+    # Remove any snmpv2 community which might be configured on your swtich
+    # e.g. snmp-server community secret RO
     # It will be removed next time you run the playbook
     - name: Remove all snmp v2 configurations
       vars:
