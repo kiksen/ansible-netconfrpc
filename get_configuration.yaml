@@ -2,7 +2,7 @@
 - name: Get inventory via NETCONF
   hosts: all
   gather_facts: no
-  #connection: ansible.netcommon.netconf
+
   vars:
     ansible_user: test
     ansible_ssh_pass: test
