@@ -1,8 +1,8 @@
 ---
-- name: Get inventory via NETCONF
+- name: Edit configuration block
   hosts: all
   gather_facts: no
-  #connection: ansible.netcommon.netconf
+
   vars:
     ansible_user: test
     ansible_ssh_pass: test
