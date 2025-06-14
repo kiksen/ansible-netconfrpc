@@ -9,6 +9,7 @@ The old version is bascially a cli wrapper which allows to send CLI configuratio
 Available roles:
 - [get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
 - [allowed configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#allowed-configuration)
+- [block configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#block-configuration)
 
 
 ## Device configuration
@@ -29,10 +30,8 @@ This role retrieves the complete device configuration. The result will be stored
 
 #### `type`
 
-- **Type**: String  
 - **Required**: No  
-- **Default**: `running`  
-- **Choices**: `running`, `derived`, `startup`  
+- **Choices**: `running` (default), `derived`, `startup`  
 - **Description**: Specifies the type of configuration to retrieve.
 
 #### `show_commands`
@@ -48,7 +47,21 @@ This role retrieves the complete device configuration. The result will be stored
 - **Required**: No  
 - **Default**: `false`  
 - **Description**: Enables debug output.
-  
+
+#### `Results`
+getConfiguration will return 'netconfrpc_result' which has the following fields:
+
+| Key         | value                                                   |
+|----------------|---------------------------------------------------------------|
+| `stdout`  | The current config from the device as string. Like ansible_net_config from ios_facts |
+| `stdout_lines` | The current config as a list of strings (used by all filter for theses roles)  |
+| `show_result` | Dictinary containing all show commands e.g. 'version' as key and the output as value |
+| `interfaces` | Dictionary contaning the interface name as key and all configuration lines as value |
+| `vlans` | Dictionarry containing each vlan_id as key and the name as value  |
+
+
+
+
 ### Example
 ```
     - name: Get Config from device
