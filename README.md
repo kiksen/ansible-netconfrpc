@@ -87,9 +87,10 @@ For example:
 #### `allowed`
 
 - **Type**: List of strings  
-- **Required**: Yes  
+- **Required**: No  
 - **Description**:  
   A list of allowed configuration entries. These must exactly match the captured group from the pattern (e.g., `username Cisco`).
+  If you don't use allowed, all found lines will be removed. See examples.
 
 #### `current_config`
 
@@ -123,6 +124,17 @@ The following playbook will delete Legacy_Unix1 and Legacy_Unix2 and keep ISE1 a
           - radius server ISE1
           - radius server ISE2
         pattern: '^(radius server \w+)$'
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/allowedConfig
+```
+
+These example shows how to remove all snmpv2 configurations from a device to ensure we don't have any legacy configurations.
+```
+    - name: Remove all snmp v2 configurations
+      vars:
+        pattern: '^(snmp-server community \w+).*$'
         current_config: "{{ full_config }}"
         debug: true
       include_role:
