@@ -10,7 +10,7 @@ Available roles:
 - [get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
 - [allowed configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#allowed-configuration)
 - [block configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#blockconfig)
-- [global configuration]([https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#global-configuration)
+- [global configuration](https://github.com/kiksen/ansible-netconfrfc?tab=readme-ov-file#globalconfig)
 
 ## Device configuration
 You need a user which has priviledge level 15. SSH needs to be enabled. netconf is used via port 22 using 'netconf' subsystem.
