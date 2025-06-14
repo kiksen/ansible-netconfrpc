@@ -304,9 +304,10 @@ This role is used to manage and apply interface-level configurations on network 
 - **Description**: Interface name, e.g., `GigabitEthernet1/0/1`.
 
 ### current_config
-- **Required**: Yes  
+- **Type**: `list` (elements of type `str`)  
+- **Required**: Yes
 - **Description**:  
-  A list of all configuration lines currently found on the interface. These can be obtained using the `getConfiguration` role, which returns `netconfrpc.interfaces`.
+  A list of all configuration lines currently found on the interface. These can be obtained using the `getConfiguration` role, which returns `netconfrpc.interfaces[name]`. These are only the config lines without "interface GigabitEthernetxxx".
 
 ### intended_config
 - **Type**: `list` (elements of type `str`)  
@@ -330,15 +331,20 @@ This role is used to manage and apply interface-level configurations on network 
 
 ### Example
 ```
+    - name: Get Device configuration including interfaces and vlans
+      include_role:
+        name: netconfrpc/getConfiguration
+    # will return netconffpc_result
+
     - name: Set Interface Configuration to Trunk
       vars:
         default_interface: true
-        current_config: "{{ full_config }}"
         name: GigabitEthernet4
+        current_config: "{{ netconfrpc_result.interfaces[name] }}"        
         intended_config:
         - description Switch1-to-Switch2
         - switchport mode trunk
-        - switchport trunk allowed vlan 100,200,300
+        - switchport trunk allowed vlan 55,100,200,300
         - negotiation auto
         default_config:
           - switchport trunk native vlan 1
