@@ -7,7 +7,7 @@ This is an older technology. Find some information [here on Ciscos website](http
 The old version is bascially a cli wrapper which allows to send CLI configurations to your device. The advantages are no prompts (e.g. when deleting a user) and the configuration is transfered to the device before it is executed.
 
 Available roles:
-[get configuration]([https://github.com/kiksen/ansible-netconfrfc/README.md#get-configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
+[get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
 
 
 ## Device configuration
