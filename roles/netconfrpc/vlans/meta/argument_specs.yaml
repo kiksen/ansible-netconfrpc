@@ -14,12 +14,12 @@ argument_specs:
         description: >
           Complete device configuration including all vlans
 
-      # add_vlans:
-      #   type: list
-      #   description: >
-      #     a list of vlans to add
-      #     - vlan_id: 123
-      #       name: Test
+      add_vlans:
+        type: list
+        description: >
+          a list of vlans to add
+          - vlan_id: 123
+            name: Test
 
       replace:
         type: bool
@@ -28,14 +28,20 @@ argument_specs:
         description: >
           Use only if set to true. If merge is defined remove vlans is not used, but only 'add_vlans' will remain on the device.
 
-      # remove_vlans:
-      #   type: list
-      #   elements: int
-      #   required: false
-      #   default: false
-      #   description: >
-      #     A list of vlan IDs to remove
-      #       - 123
-      #       - 200
-      #       - ...
+      remove_vlans:
+        type: list
+        elements: int
+        required: false
+        default: false
+        description: >
+          A list of vlan IDs to remove
+            - 123
+            - 200
+            - ...
 
+      debug:
+        type: bool
+        required: false
+        default: false
+        description: >
+          Print more information when executing
