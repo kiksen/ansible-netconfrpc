@@ -141,8 +141,90 @@ These example shows how to remove all snmpv2 configurations from a device to ens
         name: netconfrpc/allowedConfig
 ```
 
-block configuration
+# blockConfig
 
+**Description**  
+Make sure all lines from a block of configuration is present or removed.  
+This role can be used for access lists or any other block.  
+It doesn't need to be an indented block of config like access-lists or class-maps.
+
+## Optionen
+
+#### start_block
+- **Typ:** str  
+- **Required:** Yes 
+- **Description:** 
+  A line of code to start a config block: `ip access-list standard MGMT`
+
+#### end_block
+- **Typ:** str  
+- **Required:** Yes  
+- **Description:**  
+  A line of configuration to end a config block: `!`
+
+#### before
+- **Typ:** list (str)  
+- **Required:** No  
+- **Description:**  
+  Commands you need to fix things up like deleting an access-list completely
+
+#### default_config
+- **Typ:** list (str)  
+- **Required:** No  
+- **Description:**  
+  A list of commands which are not visible in the final configuration
+
+#### current_config
+- **Typ:** list (str)  
+- **Required:** Yes
+- **Description:**  
+  Your current complete device config as list of strings.
+
+### Example
+The following example will create an access-list MGMT. If the list exists and if lines are different it will be removed by 'before' command and recreated.
+Since the configuration will be not send line by line but as a block via netconf you can use it to modify the access list on line configurations.
+```
+    - name: Re-create access list
+      vars:
+        start_block: ip access-list standard MGMT
+        end_block: '!'
+        before: no ip access-list standard MGMT
+        intended_config:
+          - 10 permit 10.1.1.0 0.0.0.255
+          - 20 permit 20.1.1.1
+          - 40 remark Managment network
+          - 50 permit 30.1.1.0 0.0.0.255
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/blockConfig
+```
+
+The following example starts with a routemap like this. 
+```
+route-map TEST permit 10
+  match ip address 102
+  set tag 123
+```
+
+You want to replace 102 by 101. If you don't use default_config you will end up with "match ip address 101 102".
+```
+    - name: Route-map
+      vars:
+        start_block: route-map TEST permit 10
+        end_block: '!'
+        intended_config:
+          - match ip address 102
+          - set tag 123
+        default_config:
+          - no match ip address 101
+        current_config: "{{ full_config }}"
+        debug: false
+      include_role:
+        name: netconfrpc/blockConfig
+```
+
+****
 
 global configuration
 
