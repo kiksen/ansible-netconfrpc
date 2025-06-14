@@ -357,4 +357,57 @@ This role is used to manage and apply interface-level configurations on network 
 ```
 
 
-vlan configuration
+# vlan configuration
+
+## Description
+This Ansible module allows you to write or remove VLANs from your device..
+
+## Options
+
+### `current_config`
+- **Type**: string  
+- **Required**: No  
+- **Description**:  
+  Complete device configuration including all VLANs.
+
+---
+
+### `add_vlans`
+- **Type**: list  
+- **Required**: No  
+- **Description**:  
+  A list of VLANs to add.  
+  Example:
+  ```yaml
+  add_vlans:
+    - vlan_id: 123
+      name: Test
+  ```
+
+### `replace`
+- **Type**: boolean  
+- **Required**: No  
+- **Default**: false  
+- **Description**:  
+  Use only if set to true. If replace is defined remove_vlans is not used, only 'add_vlans' will remain on the device, all other vlans found will be removed.
+  
+### `remove_vlans`
+- **Type**: list of integers  
+- **Required**: No  
+- **Default**: false  
+- **Description**:  
+  A list of VLAN IDs to remove.  
+  Example:
+  ```yaml
+  remove_vlans:
+    - 123
+    - 200
+    - ...
+  ```
+
+### `debug`
+- **Type**: boolean  
+- **Required**: No  
+- **Default**: false  
+- **Description**:  
+  Print more information when executing.
