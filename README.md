@@ -144,22 +144,18 @@ These example shows how to remove all snmpv2 configurations from a device to ens
 # blockConfig
 
 **Description**  
-Make sure all lines from a block of configuration is present or removed.  
-This role can be used for access lists or any other block.  
-It doesn't need to be an indented block of config like access-lists or class-maps.
+This role makes sure all lines from a block of configuration is present or removed. This role can be used for access lists or any other block of configuration lines. It doesn't need to be an indented block of config like access-lists or class-maps.
 
 ## Optionen
 
 #### start_block
-- **Typ:** str  
 - **Required:** Yes 
-- **Description:** 
-  A line of code to start a config block: `ip access-list standard MGMT`
+- **Description:**
+  A line of configuration to start a config block: `ip access-list standard MGMT`
 
 #### end_block
-- **Typ:** str  
 - **Required:** Yes  
-- **Description:**  
+- **Description:**
   A line of configuration to end a config block: `!`
 
 #### before
@@ -224,9 +220,48 @@ You want to replace 102 by 101. If you don't use default_config you will end up 
         name: netconfrpc/blockConfig
 ```
 
-****
+# globalConfig
+**Description**
+Send global config commands to the device.
 
-global configuration
+## Options
+### before
+- **Type:** list
+- **Elements:** str
+- **Required:** false
+- **Description:** A list of commands which are sent to the device, but not used for checks if intended_config is reached.
+
+### intended_config
+- **Type:** list
+- **Elements:** str
+- **Required:** false
+- **Description:** A list of commands which are sent to the device. If a command of the list is missing, the config will be sent.
+
+### default_config
+- **Type:** list
+- **Elements:** str
+- **Required:** false
+- **Description:** A list of commands which are not visible in the final configuration. You can use this list for default commands or to remove things.
+
+### current_config
+- **Type:** list
+- **Elements:** str
+- **Required:** true
+- **Description:** Your current complete device config as string, which is used to determine the intended configuration.
+
+### unwanted_config
+- **Type:** list
+- **Elements:** str
+- **Required:** true
+- **Description:** If unwanted_config is found in the current_config, the execution is triggered.
+
+### debug
+- **Type:** bool
+- **Required:** false
+- **Default:** false
+- **Description:** Print more information when executing.
+
+## Example Usage
 
 working with interface configuration
 
