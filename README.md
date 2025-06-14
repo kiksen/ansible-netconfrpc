@@ -275,9 +275,60 @@ Send global config commands to the device.
 - **Default:** false
 - **Description:** Print more information when executing.
 
-## Example Usage
+## Example
 
-working with interface configuration
+```
+    - name: Send configuration lines to device
+      vars:
+        intended_config:
+          - snmp-server community insecure RO
+          - hostname netconfIsCoolxxx
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/globalConfig
+```
+
+# interface
+
+## Description
+
+This role is used to manage and apply interface-level configurations on network devices. It can analyze current configurations, identify required changes, and apply the desired configuration state reliably.
+
+## Options
+
+### `name`
+- **Type**: `str`
+- **Required**: Yes  
+- **Description**: Interface name, e.g., `GigabitEthernet1/0/1`.
+
+### `current_config`
+- **Required**: Yes  
+- **Description**:  
+  A list of all configuration lines currently found on the interface. These can be obtained using the `getConfiguration` role, which returns `netconfrpc.interfaces`.
+
+### `intended_config`
+- **Type**: `list` (elements of type `str`)  
+- **Required**: Yes  
+- **Description**:  
+  A list of configuration commands to be sent to the device.
+
+### `default_interface`
+- **Type**: `bool`  
+- **Required**: No  
+- **Default**: `false`  
+- **Description**:  
+  Sends `default interface <name>` before pushing configuration to the device.
+
+### `default_config`
+- **Type**: `list` (elements of type `str`)  
+- **Required**: No  
+- **Description**:  
+  Lines that are not visible after being sent to the configuration. These are usually default commands like `logging event link-status`.  
+  If you don't want logging, you need to add `no logging event link-status` to `target_config`, since you will see it in the running configuration.
+
+---
+
 
 
 vlan configuration
