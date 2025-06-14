@@ -9,8 +9,8 @@ The old version is bascially a cli wrapper which allows to send CLI configuratio
 Available roles:
 - [get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
 - [allowed configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#allowed-configuration)
-- [block configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#block-configuration)
-
+- [block configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#blockconfig)
+- [global configuration]([https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#global-configuration)
 
 ## Device configuration
 You need a user which has priviledge level 15. SSH needs to be enabled. netconf is used via port 22 using 'netconf' subsystem.
