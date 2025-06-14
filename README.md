@@ -298,30 +298,30 @@ This role is used to manage and apply interface-level configurations on network 
 
 ## Options
 
-### `name`
+### name
 - **Type**: `str`
 - **Required**: Yes  
 - **Description**: Interface name, e.g., `GigabitEthernet1/0/1`.
 
-### `current_config`
+### current_config
 - **Required**: Yes  
 - **Description**:  
   A list of all configuration lines currently found on the interface. These can be obtained using the `getConfiguration` role, which returns `netconfrpc.interfaces`.
 
-### `intended_config`
+### intended_config
 - **Type**: `list` (elements of type `str`)  
 - **Required**: Yes  
 - **Description**:  
   A list of configuration commands to be sent to the device.
 
-### `default_interface`
+### default_interface
 - **Type**: `bool`  
 - **Required**: No  
 - **Default**: `false`  
 - **Description**:  
   Sends `default interface <name>` before pushing configuration to the device.
 
-### `default_config`
+### default_config
 - **Type**: `list` (elements of type `str`)  
 - **Required**: No  
 - **Description**:  
