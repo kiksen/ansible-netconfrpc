@@ -3,7 +3,7 @@ argument_specs:
   main:
     short_description: netconf-interface
     description:
-      - Write interface configuration.
+      - These role helps to push configuration to interface configuration blocks. It is very similar to the block role.
     author:
       - Christian Knoblauch
 
@@ -14,7 +14,9 @@ argument_specs:
         description: Interface name e.g. GigabitEhternet1/0/1
 
       current_config:
-        required: false
+        type: list
+        elements: str
+        required: true
         description: >
           A list with all configuration lines which are now found on the interface. Get them using role getConfiguration. It returns netconfrpc.interfaces.
 
@@ -29,7 +31,7 @@ argument_specs:
         type: bool
         required: false
         default: false
-        description: send 'default interface name' before config is send
+        description: send 'default interface <name e.g. GigabitEhternet1>' before config is send
 
       default_config:
         type: list
@@ -40,3 +42,9 @@ argument_specs:
           default commands like 'logging event link-status'. If you don't want logging you need to add
           'no logging event link-status' to target_config, since you will see it ins the running config.
 
+      debug:
+        type: bool
+        required: false
+        default: false
+        description: >
+          Print more information when executing

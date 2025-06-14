@@ -22,7 +22,7 @@
 
     - name: Pring retrieved config
       set_fact:
-        full_config: "{{ netconfrpc_result.interfaces }}"
+        all_interfaces: "{{ netconfrpc_result.interfaces }}"
 
     # - name: Set Interface Configuration
     #   vars:
@@ -38,17 +38,18 @@
     #     - no logging event link-status
         
     #     default_config:
+
     #       - mop enabled
     #       - mop sysid
-    #     debug: true
+    #     debug: true gd
     #   include_role:
     #     name: netconfrpc/interface
 
     - name: Set Interface Configuration to Trunk
       vars:
         default_interface: true
-        current_config: "{{ full_config }}"
         name: GigabitEthernet4
+        current_config: "{{ all_interfaces[name] }}"        
         intended_config:
         - description Switch1-to-Switch2
         - switchport mode trunk

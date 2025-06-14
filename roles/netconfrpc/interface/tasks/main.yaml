@@ -1,22 +1,16 @@
 ---
 
 
-# + end am Ende, weil show running | s interfaces kein ! oder end am Ende hat
-# ?=(interface|end|!) holt den Inhalt bis zum nächsten interface, end oder ! am Ende. Die ! werden gebraucht wenn man die komplette config zieht.
-- name: Get interface configuration
-  set_fact:
-    current_config_lines: "{{ current_config[name] }}"
-
-- name: Current config found on interface
+- name: Show config found on interface
   debug:
     msg: 
-      - "{{ current_config_lines }}"
-  when: debug == 'true'
+      - "{{ current_config }}"
+  when: debug | bool == true
 
 - name: check if config is different
   set_fact:
-    diff_c_to_i: "{{ current_config_lines | difference(intended_config) }}"
-    diff_i_to_c: "{{ intended_config | difference(current_config_lines) }}"
+    diff_c_to_i: "{{ current_config | difference(intended_config) }}"
+    diff_i_to_c: "{{ intended_config | difference(current_config) }}"
 
 - name: diff
   debug: 
