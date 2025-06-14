@@ -141,10 +141,127 @@ These example shows how to remove all snmpv2 configurations from a device to ens
         name: netconfrpc/allowedConfig
 ```
 
-block configuration
+# blockConfig
 
+**Description**  
+This role makes sure all lines from a block of configuration is present or removed. This role can be used for access lists or any other block of configuration lines. It doesn't need to be an indented block of config like access-lists or class-maps.
 
-global configuration
+## Optionen
+
+#### start_block
+- **Required:** Yes 
+- **Description:**
+  A line of configuration to start a config block: `ip access-list standard MGMT`
+
+#### end_block
+- **Required:** Yes  
+- **Description:**
+  A line of configuration to end a config block: `!`
+
+#### before
+- **Typ:** list (str)  
+- **Required:** No  
+- **Description:**  
+  Commands you need to fix things up like deleting an access-list completely
+
+#### default_config
+- **Typ:** list (str)  
+- **Required:** No  
+- **Description:**  
+  A list of commands which are not visible in the final configuration
+
+#### current_config
+- **Typ:** list (str)  
+- **Required:** Yes
+- **Description:**  
+  Your current complete device config as list of strings.
+
+### Example
+The following example will create an access-list MGMT. If the list exists and if lines are different it will be removed by 'before' command and recreated.
+Since the configuration will be not send line by line but as a block via netconf you can use it to modify the access list on line configurations.
+```
+    - name: Re-create access list
+      vars:
+        start_block: ip access-list standard MGMT
+        end_block: '!'
+        before: no ip access-list standard MGMT
+        intended_config:
+          - 10 permit 10.1.1.0 0.0.0.255
+          - 20 permit 20.1.1.1
+          - 40 remark Managment network
+          - 50 permit 30.1.1.0 0.0.0.255
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/blockConfig
+```
+
+The following example starts with a routemap like this. 
+```
+route-map TEST permit 10
+  match ip address 102
+  set tag 123
+```
+
+You want to replace 102 by 101. If you don't use default_config you will end up with "match ip address 101 102".
+```
+    - name: Route-map
+      vars:
+        start_block: route-map TEST permit 10
+        end_block: '!'
+        intended_config:
+          - match ip address 102
+          - set tag 123
+        default_config:
+          - no match ip address 101
+        current_config: "{{ full_config }}"
+        debug: false
+      include_role:
+        name: netconfrpc/blockConfig
+```
+
+# globalConfig
+**Description**
+Send global config commands to the device.
+
+## Options
+### before
+- **Type:** list
+- **Elements:** str
+- **Required:** false
+- **Description:** A list of commands which are sent to the device, but not used for checks if intended_config is reached.
+
+### intended_config
+- **Type:** list
+- **Elements:** str
+- **Required:** false
+- **Description:** A list of commands which are sent to the device. If a command of the list is missing, the config will be sent.
+
+### default_config
+- **Type:** list
+- **Elements:** str
+- **Required:** false
+- **Description:** A list of commands which are not visible in the final configuration. You can use this list for default commands or to remove things.
+
+### current_config
+- **Type:** list
+- **Elements:** str
+- **Required:** true
+- **Description:** Your current complete device config as string, which is used to determine the intended configuration.
+
+### unwanted_config
+- **Type:** list
+- **Elements:** str
+- **Required:** true
+- **Description:** If unwanted_config is found in the current_config, the execution is triggered.
+
+### debug
+- **Type:** bool
+- **Required:** false
+- **Default:** false
+- **Description:** Print more information when executing.
+
+## Example Usage
 
 working with interface configuration
 
