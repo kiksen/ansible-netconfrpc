@@ -38,7 +38,6 @@
     #     - no logging event link-status
         
     #     default_config:
-    #       - switchport trunk native vlan 1
     #       - mop enabled
     #       - mop sysid
     #     debug: true
