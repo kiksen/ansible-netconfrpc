@@ -27,31 +27,27 @@
    
 
     - name: config
-      vars:
-        debug: true
-        # show_commands:
-        #   - version
       include_role:
         name: netconfrpc/getConfiguration
 
     - set_fact:
         full_config: "{{ netconfrpc_result.stdout }}"
 
-    # - name: Send config to device
-    #   vars:
-    #     start_block: ip access-list standard MGMTX
-    #     end_block: '!'
-    #     before: no ip access-list standard MGMTX
-    #     intended_config:
-    #       - 10 permit 10.1.1.0 0.0.0.255
-    #       - 20 permit 20.1.1.1
-    #       - 40 remark TEST1
-    #       - 90 remark HUG
-    #     #default_config: []
-    #     current_config: "{{ full_config }}"
-    #     debug: true
-    #   include_role:
-    #     name: netconfrpc/blockConfig
+    - name: Send config to device
+      vars:
+        start_block: ip access-list standard MGMTX
+        end_block: '!'
+        before: no ip access-list standard MGMTX
+        intended_config:
+          - 10 permit 10.1.1.0 0.0.0.255
+          - 20 permit 20.1.1.1
+          - 40 remark TEST1
+          - 90 remark HUG
+        #default_config: []
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/blockConfig
 
 
     - name: Route-map

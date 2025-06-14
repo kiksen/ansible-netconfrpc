@@ -59,7 +59,7 @@
 
 - name: extract vlans to netconfrpc_result.vlans
   vars:
-    data: "{{ netconfrpc_result.stdout | extract_vlans }}"
+    data: "{{ netconfrpc_result.stdout_lines | extract_vlans }}"
   set_fact:
     netconfrpc_result: "{{ netconfrpc_result | combine( {'vlans': data } ) }}"
 
