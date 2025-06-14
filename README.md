@@ -11,6 +11,7 @@ Available roles:
 - [allowed configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#allowed-configuration)
 - [block configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#blockconfig)
 - [global configuration](https://github.com/kiksen/ansible-netconfrfc?tab=readme-ov-file#globalconfig)
+- [interfaces](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#interface)
 
 ## Device configuration
 You need a user which has priviledge level 15. SSH needs to be enabled. netconf is used via port 22 using 'netconf' subsystem.
@@ -327,8 +328,27 @@ This role is used to manage and apply interface-level configurations on network 
   Lines that are not visible after being sent to the configuration. These are usually default commands like `logging event link-status`.  
   If you don't want logging, you need to add `no logging event link-status` to `target_config`, since you will see it in the running configuration.
 
----
-
+### Example
+```
+    - name: Set Interface Configuration to Trunk
+      vars:
+        default_interface: true
+        current_config: "{{ full_config }}"
+        name: GigabitEthernet4
+        intended_config:
+        - description Switch1-to-Switch2
+        - switchport mode trunk
+        - switchport trunk allowed vlan 100,200,300
+        - negotiation auto
+        default_config:
+          - switchport trunk native vlan 1
+          - logging event link-status
+          - mop enabled
+          - mop sysid
+        debug: true
+      include_role:
+        name: netconfrpc/interface
+```
 
 
 vlan configuration
