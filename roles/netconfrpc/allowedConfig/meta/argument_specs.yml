@@ -20,7 +20,7 @@ argument_specs:
       allowed:
         type: list
         elements: str
-        required: true
+        required: false
         description: >
           a list of allowed items. They need to match the group match e.g. "username Cisco"
 

@@ -1,9 +1,9 @@
 ---
 argument_specs:
   main:
-    short_description: netconf-sendconfig
+    short_description: blockConfig
     description:
-      - Send config commands to the device.
+      - Make sure all lines from a block of configuration is present or removed. This role can be used for access lists or any other block. It doesn't need to be an indewnted block of config like access-lists or class-maps.
     author:
       - Christian Knoblauch
     options:
