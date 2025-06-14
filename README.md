@@ -7,8 +7,8 @@ This is an older technology. Find some information [here on Ciscos website](http
 The old version is bascially a cli wrapper which allows to send CLI configurations to your device. The advantages are no prompts (e.g. when deleting a user) and the configuration is transfered to the device before it is executed.
 
 Available roles:
-[get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
-[allowed configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#allowed-configuration)
+- [get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
+- [allowed configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#allowed-configuration)
 
 
 ## Device configuration
@@ -105,8 +105,29 @@ For example:
 - **Description**:  
   Enables debug output for troubleshooting.
 
+### Example
+The following playbook will delete Legacy_Unix1 and Legacy_Unix2 and keep ISE1 and ISE2.
+```
+  # radius server ISE1
+  # address ipv4 10.1.1.1 auth-port 1812 acct-port 1813
+  # radius server ISE2
+  # address ipv4 20.1.1.1 auth-port 1812 acct-port 1813
+  # radius server Legacy_Unix1
+  # address ipv4 30.1.1.1 auth-port 1812 acct-port 1813
+  # radius server Legacy_Unix2
+  # address ipv4 40.1.1.1 auth-port 1812 acct-port 1813
 
-
+    - name: Make sure only our allowed radius server are configured!
+      vars:
+        allowed:
+          - radius server ISE1
+          - radius server ISE2
+        pattern: '^(radius server \w+)$'
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/allowedConfig
+```
 
 block configuration
 
