@@ -122,14 +122,15 @@ For example:
 ### Example
 The following playbook will delete Legacy_Unix1 and Legacy_Unix2 and keep ISE1 and ISE2.
 ```
+  # Imaging you have the following configuration on your device:
   # radius server ISE1
-  # address ipv4 10.1.1.1 auth-port 1812 acct-port 1813
+  #  address ipv4 10.1.1.1 auth-port 1812 acct-port 1813
   # radius server ISE2
-  # address ipv4 20.1.1.1 auth-port 1812 acct-port 1813
+  #  address ipv4 20.1.1.1 auth-port 1812 acct-port 1813
   # radius server Legacy_Unix1
-  # address ipv4 30.1.1.1 auth-port 1812 acct-port 1813
+  #  address ipv4 30.1.1.1 auth-port 1812 acct-port 1813
   # radius server Legacy_Unix2
-  # address ipv4 40.1.1.1 auth-port 1812 acct-port 1813
+  #  address ipv4 40.1.1.1 auth-port 1812 acct-port 1813
 
     - name: Make sure only our allowed radius server are configured!
       vars:
