@@ -6,6 +6,9 @@ This is an older technology. Find some information [here on Ciscos website](http
 
 The old version is bascially a cli wrapper which allows to send CLI configurations to your device. The advantages are no prompts (e.g. when deleting a user) and the configuration is transfered to the device before it is executed.
 
+Available roles:
+[get configuration](https://github.com/kiksen/ansible-netconfrfc/edit/main/README.md#get-configuration)
+
 
 ## Device configuration
 You need a user which has priviledge level 15. SSH needs to be enabled. netconf is used via port 22 using 'netconf' subsystem.
@@ -18,7 +21,34 @@ netconf
 # Roles
 
 ## get configuration
-This role get the running or startup configuration of your device:
+
+This role retrieves the complete device configuration. The result will be stored in the netconfrpc_result. Additionally, it is possible to specify a list of show commands to be retrieved in a single request from the device. The results of these commands will be stored in show_result.
+
+### Options
+
+#### `type`
+
+- **Type**: String  
+- **Required**: No  
+- **Default**: `running`  
+- **Choices**: `running`, `derived`, `startup`  
+- **Description**: Specifies the type of configuration to retrieve.
+
+#### `show_commands`
+
+- **Type**: List of strings  
+- **Required**: No  
+- **Default**: `[]`  
+- **Description**: A list of show commands to execute. Provide only the specific items you want to display, such as `'version'` or `'inventory'`.
+
+#### `debug`
+
+- **Type**: Boolean  
+- **Required**: No  
+- **Default**: `false`  
+- **Description**: Enables debug output.
+  
+### Example
 ```
     - name: Get Config from device
       vars:
