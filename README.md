@@ -8,6 +8,7 @@ The old version is bascially a cli wrapper which allows to send CLI configuratio
 
 Available roles:
 [get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
+[allowed configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#allowed-configuration)
 
 
 ## Device configuration
@@ -60,6 +61,52 @@ This role retrieves the complete device configuration. The result will be stored
 ```
 
 ## allowed configuration
+
+### Description
+
+This role removes unwanted configuration elements such as users, NTP servers, or RADIUS configurations.
+
+A regular expression (regex pattern) is used to extract the relevant part of each configuration line to generate a corresponding `no` command for removal.  
+The regex must contain exactly **one capturing group** `()` which will be used to build the command.  
+For example:  
+- Configuration line: `username Cisco`  
+- Regex pattern: `^(username \w+).*$`  
+- Resulting command: `no username Cisco`  
+
+**Important:** The regex must match the entire line.
+
+### Options
+
+#### `pattern`
+
+- **Type**: String  
+- **Required**: Yes  
+- **Description**:  
+  A regex pattern used to extract the relevant configuration lines for removal. The pattern must contain exactly one capturing group.
+
+#### `allowed`
+
+- **Type**: List of strings  
+- **Required**: Yes  
+- **Description**:  
+  A list of allowed configuration entries. These must exactly match the captured group from the pattern (e.g., `username Cisco`).
+
+#### `current_config`
+
+- **Type**: List of strings  
+- **Required**: Yes  
+- **Description**:  
+  The current full device configuration as a list of strings.
+
+#### `debug`
+
+- **Type**: Boolean  
+- **Required**: No  
+- **Description**:  
+  Enables debug output for troubleshooting.
+
+
+
 
 block configuration
 
