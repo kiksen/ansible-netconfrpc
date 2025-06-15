@@ -20,10 +20,7 @@
       include_role:
         name: netconfrpc/getConfiguration
 
-    - debug:
-        msg: "{{ netconfrpc_result.vlans }}"
-
-    - name: Check vlans
+    - name: Set only configured vlans!
       vars:
         current_configuration: "{{ netconfrpc_result.stdout_lines }}"
         debug: true
@@ -35,11 +32,8 @@
           - vlan_id: 555
             name: Management
           - vlan_id: 888
-            name: secret
+            name: SuperSecret
         replace: true
-        remove_vlans:
-          - 1000
-          - 200
       include_role:
         name: netconfrpc/vlans
 
