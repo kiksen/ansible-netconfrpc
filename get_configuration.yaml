@@ -30,7 +30,6 @@
       debug:
         msg: "{{ netconfrpc_result.interfaces }}"
 
-
     - name: Show result of show commands if any
       debug:
         msg:

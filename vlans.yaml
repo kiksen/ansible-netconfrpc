@@ -11,10 +11,7 @@
     ansible_become_method: enable
     ansible_port: 22
 
-
   tasks:
-
-
 
     - name: Get running configuration
       include_role:
@@ -36,4 +33,3 @@
         replace: true
       include_role:
         name: netconfrpc/vlans
-

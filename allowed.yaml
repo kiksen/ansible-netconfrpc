@@ -11,11 +11,7 @@
     ansible_become: yes
     ansible_become_method: enable
     ansible_port: 22
-
-    pattern: '^(username \w+).*$'
-    allowed:
-      - username test
-
+ 
   tasks:
   
     - name: config

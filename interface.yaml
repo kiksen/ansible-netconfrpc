@@ -12,7 +12,6 @@
     ansible_become_method: enable
     ansible_port: 22
 
-    vid: 555
 
   tasks:
   
@@ -51,7 +50,7 @@
         intended_config:
         - description Switch1-to-Switch2
         - switchport mode trunk
-        - switchport trunk allowed vlan 100,200,300,{{ vid }}
+        - switchport trunk allowed vlan 100,200,300,555
         - negotiation auto
         default_config:
           - switchport trunk native vlan 1

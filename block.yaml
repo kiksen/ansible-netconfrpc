@@ -12,19 +12,7 @@
     ansible_become_method: enable
     ansible_port: 22
 
-    #pattern: '^(snmp-server community \w+).*$'
-    pattern: '^(username \w+).*$'
-    allowed:
-      - username test
-
-    # radius_pattern: '^(radius server \w+)$'
-    # radius_allowed:
-    #   - radius server TEST
-    #   - radius server HUGO
-
   tasks:
-
-   
 
     - name: config
       include_role:
@@ -43,7 +31,6 @@
           - 20 permit 20.1.1.1
           - 40 remark TEST1
           - 90 remark HUG
-        #default_config: []
         current_config: "{{ full_config }}"
         debug: true
       include_role:
