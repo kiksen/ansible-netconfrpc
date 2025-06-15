@@ -40,7 +40,7 @@ This role retrieves the complete device configuration. The result will be stored
 ```
 
 ### Options
-#### `type`
+#### `type`:
 
 - **Required**: No  
 - **Choices**: `running` (default), `derived`, `startup`  
@@ -53,14 +53,14 @@ This role retrieves the complete device configuration. The result will be stored
 - **Default**: `[]`  
 - **Description**: A list of show commands to execute. Provide only the specific items you want to display, such as `'version'` or `'inventory'`.
 
-#### `debug`
+#### `debug`:
 
 - **Type**: Boolean  
 - **Required**: No  
 - **Default**: `false`  
 - **Description**: Enables debug output.
 
-#### `Results`
+#### `Results`:
 getConfiguration will return 'netconfrpc_result' which has the following fields:
 
 | Key         | value                                                   |
@@ -125,26 +125,26 @@ These example shows how to remove all snmpv2 configurations from a device to ens
 ```
 
 ### Options
-#### `pattern`
+#### `pattern`:
 - **Type**: String  
 - **Required**: Yes  
 - **Description**:  
   A regex pattern used to extract the relevant configuration lines for removal. The pattern must contain exactly one capturing group.
 
-#### `allowed`
+#### `allowed`:
 - **Type**: List of strings  
 - **Required**: No  
 - **Description**:  
   A list of allowed configuration entries. These must exactly match the captured group from the pattern (e.g., `username Cisco`).
   If you don't use allowed, all found lines will be removed. See examples.
 
-#### `current_config`
+#### `current_config`:
 - **Type**: List of strings  
 - **Required**: Yes  
 - **Description**:  
   The current full device configuration as a list of strings.
 
-#### `debug`
+#### `debug`:
 - **Type**: Boolean  
 - **Required**: No  
 - **Description**:  
@@ -201,29 +201,29 @@ You want to replace 102 by 101. If you don't use default_config you will end up 
 ```
 
 ## Optionen
-#### start_block
+#### `start_block:`
 - **Required:** Yes 
 - **Description:**
   A line of configuration to start a config block: `ip access-list standard MGMT`
 
-#### end_block
+#### `end_block:`
 - **Required:** Yes  
 - **Description:**
   A line of configuration to end a config block: `!`
 
-#### before
+#### `before:`
 - **Typ:** list (str)  
 - **Required:** No  
 - **Description:**  
   Commands you need to fix things up like deleting an access-list completely
 
-#### default_config
+#### `default_config:`
 - **Typ:** list (str)  
 - **Required:** No  
 - **Description:**  
   A list of commands which are not visible in the final configuration
 
-#### current_config
+#### `current_config`:
 - **Typ:** list (str)  
 - **Required:** Yes
 - **Description:**  
@@ -248,37 +248,37 @@ The following example sends two lines of configuration to the device. If they ar
 ```
 
 ## Options
-### before
+### `before`:
 - **Type:** list
 - **Elements:** str
 - **Required:** false
 - **Description:** A list of commands which are sent to the device, but not used for checks if intended_config is reached.
 
-### intended_config
+### `intended_config`:
 - **Type:** list
 - **Elements:** str
 - **Required:** false
 - **Description:** A list of commands which are sent to the device. If a command of the list is missing, the config will be sent.
 
-### default_config
+### `default_config`:
 - **Type:** list
 - **Elements:** str
 - **Required:** false
 - **Description:** A list of commands which are not visible in the final configuration. You can use this list for default commands or to remove things.
 
-### current_config
+### `current_config`:
 - **Type:** list
 - **Elements:** str
 - **Required:** true
 - **Description:** Your current complete device config as string, which is used to determine the intended configuration.
 
-### unwanted_config
+### `unwanted_config`:
 - **Type:** list
 - **Elements:** str
 - **Required:** true
 - **Description:** If unwanted_config is found in the current_config, the execution is triggered.
 
-### debug
+### `debug`:
 - **Type:** bool
 - **Required:** false
 - **Default:** false
@@ -317,31 +317,31 @@ This role is used to manage and apply interface-level configurations on network 
 ```
 
 ## Options
-### name
+### `name`:
 - **Type**: `str`
 - **Required**: Yes  
 - **Description**: Interface name, e.g., `GigabitEthernet1/0/1`.
 
-### current_config
+### `current_config`:
 - **Type**: `list` (elements of type `str`)  
 - **Required**: Yes
 - **Description**:  
   A list of all configuration lines currently found on the interface. These can be obtained using the `getConfiguration` role, which returns `netconfrpc.interfaces[name]`. These are only the config lines without "interface GigabitEthernetxxx".
 
-### intended_config
+### `intended_config`:
 - **Type**: `list` (elements of type `str`)  
 - **Required**: Yes  
 - **Description**:  
   A list of configuration commands to be sent to the device.
 
-### default_interface
+### `default_interface`:
 - **Type**: `bool`  
 - **Required**: No  
 - **Default**: `false`  
 - **Description**:  
   Sends `default interface <name>` before pushing configuration to the device.
 
-### default_config
+### `default_config`:
 - **Type**: `list` (elements of type `str`)  
 - **Required**: No  
 - **Description**:  
@@ -404,13 +404,13 @@ This example will add vlan 100, 200, 555 and 888 and remove all other vlans whic
 ```
 
 ## Options
-### `current_config`
+### `current_config`:
 - **Type**: string  
 - **Required**: No  
 - **Description**:  
   Complete device configuration including all VLANs.
 
-### `add_vlans`
+### `add_vlans`:
 - **Type**: list  
 - **Required**: No  
 - **Description**:  
@@ -422,14 +422,14 @@ This example will add vlan 100, 200, 555 and 888 and remove all other vlans whic
       name: Test
   ```
 
-### `replace`
+### `replace`:
 - **Type**: boolean  
 - **Required**: No  
 - **Default**: false  
 - **Description**:  
   Use only if set to true. If replace is defined remove_vlans is not used, only 'add_vlans' will remain on the device, all other vlans found will be removed.
   
-### `remove_vlans`
+### `remove_vlans`:
 - **Type**: list of integers  
 - **Required**: No  
 - **Default**: false  
@@ -443,7 +443,7 @@ This example will add vlan 100, 200, 555 and 888 and remove all other vlans whic
     - ...
   ```
 
-### `debug`
+### `debug`:
 - **Type**: boolean  
 - **Required**: No  
 - **Default**: false  
