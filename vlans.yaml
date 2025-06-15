@@ -20,33 +20,26 @@
       include_role:
         name: netconfrpc/getConfiguration
 
-    - set_fact:
-        full_config: "{{ netconfrpc_result.stdout_lines }}"
-
     - debug:
-        msg: "{{ netconfrpc_result }}"
+        msg: "{{ netconfrpc_result.vlans }}"
 
-
-    # - name: Check vlans
-    #   vars:
-    #     current_config: "{{ full_config }}"
-    #     debug: true
-    #     add_vlans:
-    #       - vlan_id: 100
-    #         name: Office
-    #       - vlan_id: 124
-    #         name: Voice_sdf
-    #       - vlan_id: 55
-    #         name: Management
-    #       - vlan_id: 900
-    #         name: Clients
-    #       - vlan_id: 960
-    #         name: Guest
-    #     replace: true
-    #     remove_vlans:
-    #       - 1000
-    #       - 200
-
-    #   include_role:
-    #     name: netconfrpc/vlans
+    - name: Check vlans
+      vars:
+        current_configuration: "{{ netconfrpc_result.stdout_lines }}"
+        debug: true
+        add_vlans:
+          - vlan_id: 100
+            name: Office
+          - vlan_id: 200
+            name: Data
+          - vlan_id: 555
+            name: Management
+          - vlan_id: 888
+            name: secret
+        replace: true
+        remove_vlans:
+          - 1000
+          - 200
+      include_role:
+        name: netconfrpc/vlans
 

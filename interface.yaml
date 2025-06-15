@@ -12,7 +12,7 @@
     ansible_become_method: enable
     ansible_port: 22
 
-    vid: 303
+    vid: 555
 
   tasks:
   
@@ -27,8 +27,8 @@
     # - name: Set Interface Configuration
     #   vars:
     #     default: true
-    #     current_config: "{{ full_config }}"
-    #     name: GigabitEthernet4
+    #     name: GigabitEthernet4    
+    #     current_config: "{{ all_interfaces[name] }}"
     #     intended_config:
     #     - description Hello
     #     - switchport access vlan {{ vid }}
@@ -36,9 +36,7 @@
     #     - switchport nonegotiate
     #     - negotiation auto
     #     - no logging event link-status
-        
     #     default_config:
-
     #       - mop enabled
     #       - mop sysid
     #     debug: true gd
@@ -55,7 +53,6 @@
         - switchport mode trunk
         - switchport trunk allowed vlan 100,200,300,{{ vid }}
         - negotiation auto
-        
         default_config:
           - switchport trunk native vlan 1
           - logging event link-status

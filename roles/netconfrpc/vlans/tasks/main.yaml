@@ -1,17 +1,7 @@
 ---
-
-
-# + end am Ende, weil show running | s interfaces kein ! oder end am Ende hat
-# ?=(interface|end|!) holt den Inhalt bis zum nächsten interface, end oder ! am Ende. Die ! werden gebraucht wenn man die komplette config zieht.
-# - name: Get interface configuration
-#   set_fact:
-#     current_config_lines: "{{ current_config }}"
-
-
-- name: get currently configured on device
-  set_fact:
-    current_vlans: "{{ current_config | extract_vlans }}"
-
+- name: parse vlans from device configuration
+  set_fact: 
+    current_vlans: "{{ current_configuration | extract_vlans }}"
 - name: Vlans from device
   debug:
     msg: "{{ current_vlans }}"
@@ -42,12 +32,11 @@
 - name: Build push_stack to add or change vlans
   vars:
     add_vlan_command: "vlan {{ item.vlan_id }}"
-    add_vlan_name: "name {{ item.name|default(item.vlan_id+'_name') }}"
+    add_vlan_name: "name {{ item.name }}"
   set_fact:
     push_stack: "{{ push_stack + [ add_vlan_command ] + [add_vlan_name] }}"
   loop: "{{ vlans_to_add }}"
-
-
+ 
 - name: Build push_stack to remove vlans
   vars:
     remove_command: "no vlan {{ item }}"

@@ -8,25 +8,36 @@ argument_specs:
       - Christian Knoblauch
 
     options:
-      current_config:
-        type: str
-        required: false
+      current_configuration:
+        type: list
+        elements: str
+        required: true
         description: >
-          Complete device configuration including all vlans
+          The complete configuration as a list of strings (netconfrpc_result.stdout_lines).
 
       add_vlans:
         type: list
+        elements: dict
         description: >
           a list of vlans to add
           - vlan_id: 123
             name: Test
+        suboptions:
+          vlan_id:
+            type: int
+            required: true
+            description: vlan_id s interger e.g. 100
+          name:
+            type: str
+            required: true
+            description: VLAN-Name
 
       replace:
         type: bool
         required: false
         default: false
         description: >
-          Use only if set to true. If merge is defined remove vlans is not used, but only 'add_vlans' will remain on the device.
+          Use only if set to true. If replace is defined remove_vlans is not used, only 'add_vlans' will remain on the device, all other vlans found will be removed.
 
       remove_vlans:
         type: list

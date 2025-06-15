@@ -8,7 +8,7 @@ class FilterModule(object):
             'extract_vlans': extract_vlans,
             'find_vlans_to_change': find_vlans_to_change,
             'find_vlans_to_remove': find_vlans_to_remove,
-            'find_vlans_to_remove_merge': find_vlans_to_remove_merge
+            'find_vlans_to_remove_replace': find_vlans_to_remove_replace
         }
 
 
@@ -51,6 +51,10 @@ def extract_vlans(config_lines):
     vlan_data = {}
     current_vlans = []
     current_name = None
+
+    # split config lines if they are not a list
+    if type(config_lines) == str:
+        config_lines = config_lines.split("\n")
 
     for line in config_lines:
         #stripped = line.strip()
@@ -150,7 +154,7 @@ def find_vlans_to_remove(current_vlans, vlan_ids):
     return existing
 
 
-def find_vlans_to_remove_merge(current_vlans, vlans_toChange):
+def find_vlans_to_remove_replace(current_vlans, vlans_toChange):
     """
     Erzeugt die Differenz zwischen current_Vlans (dict) und den Vlans die hinzugefügt werden sollen.
     Damit erhält man die Vlans die noch auf dem Device sind, die aber nach dem Merge nicht mehr da sein sollen.

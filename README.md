@@ -4,7 +4,7 @@ A collection of ansible roles for legacy netconf rfc calls used by Cisco IOS. Do
 
 This is an older technology. Find some information [here on Ciscos website](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/cns/configuration/15-s/cns-15-s-book/cns-netconf.html#GUID-4EFC48BB-C72F-4442-BAE4-0D0BFA1D3082 "Optionaler Linktitel") or check [RFC 4741](https://datatracker.ietf.org/doc/html/rfc4741).
 
-The old version is bascially a cli wrapper which allows to send CLI configurations to your device. The advantages are no prompts (e.g. when deleting a user) and the configuration is transfered to the device before it is executed.
+The old version is basically a cli wrapper which allows to send CLI configurations to your device. The advantages are no prompts (e.g. when deleting a user) and the configuration is transfered to the device before it is executed.
 
 Available roles:
 - [get configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#get-configuration)
@@ -15,12 +15,56 @@ Available roles:
 - [vlans](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#vlan-configuration)
 
 ## Device configuration
-You need a user which has priviledge level 15. SSH needs to be enabled. netconf is used via port 22 using 'netconf' subsystem.
+A priviledge level 15 user is needed abd SSH needs to be enabled. netconf is used via port 22 using 'netconf' subsystem.
 ```
 conf t
 username admin privilege 15 password test
 netconf
 ```
+
+## General Notes:
+- The ansible.netcommon.netconf_rpc calls always report a "changed" state. If no changes are made, the task will be marked as skipped.
+- All roles provide a debug option that enables detailed output for troubleshooting purposes."
+
+## Directory Structure
+......\ANSIBLE-NETCONFRFC
+├───filter_plugins
+│   └───__pycache__
+└───roles
+    └───netconfrpc
+        ├───allowedConfig
+        │   ├───handlers
+        │   ├───meta
+        │   ├───tasks
+        │   └───vars
+        ├───blockConfig
+        │   ├───handlers
+        │   ├───meta
+        │   ├───tasks
+        │   └───vars
+        ├───getConfiguration
+        │   ├───meta
+        │   ├───tasks
+        │   └───vars
+        ├───globalConfig
+        │   ├───handlers
+        │   ├───meta
+        │   ├───tasks
+        │   └───vars
+        ├───interface
+        │   ├───handlers
+        │   ├───meta
+        │   ├───tasks
+        │   └───vars
+        ├───saveConfig
+        │   ├───meta
+        │   └───tasks
+        └───vlans
+            ├───handlers
+            ├───meta
+            ├───tasks
+            └───vars
+
 
 # Roles
 
@@ -67,7 +111,7 @@ getConfiguration will return 'netconfrpc_result' which has the following fields:
 | stdout  | The current config from the device as string. Like ansible_net_config from ios_facts |
 | stdout_lines | The current config as a list of strings (used by all filter for theses roles)  |
 | show_result | Dictinary containing all show commands e.g. 'version' as key and the output as value |
-| interfaces | Dictionary contaning the interface name as key and all configuration lines as value |
+| interfaces | Dictionary containing the interface name as key and all configuration lines as value |
 | vlans | Dictionarry containing each vlan_id as key and the name as value  |
 
 
@@ -90,7 +134,7 @@ For example:
 ### Example
 The following playbook will delete Legacy_Unix1 and Legacy_Unix2 and keep ISE1 and ISE2.
 ```
-  # Imaging you have the following configuration on your device:
+  # A device has the following configuration:
   # radius server ISE1
   #  address ipv4 10.1.1.1 auth-port 1812 acct-port 1813
   # radius server ISE2
