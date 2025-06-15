@@ -28,26 +28,23 @@ def expand_vlan_range(vlan_range):
     return vlan_ids
 
 def extract_vlans(config_lines):
-    """
-    Extrahiert VLAN-Definitionen aus einer Cisco-Konfiguration (Zeile für Zeile).
-
-    Gibt ein Dictionary zurück, in dem die Keys VLAN-IDs als Strings sind.
-
-    Unterstützt:
-    - Einzelne VLANs
-    - Ranges und Listen (z. B. "vlan 100,200-202")
-    - Optionale Namen
-
-    Parameter:
-    ----------
-    config_lines : list of str
-        Die Cisco-Konfiguration als Liste von Strings.
-
-    Rückgabewert:
-    -------------
+    """ 
+    VLAN Definition Extractor
+    
+    This function extracts VLAN definitions from a Cisco configuration file, processing it line by line. It returns a dictionary where the keys are VLAN IDs represented as strings.
+    
+    Supported features include:
+    - Single VLAN definitions
+    - VLAN ranges and lists (e.g., "vlan 100,200-202")
+    - Optional VLAN names
+    
+    Function Parameters:
+    - config_lines: A list of strings representing the Cisco configuration.        
+    Return vlue:
     dict[str, dict]
-        VLAN-ID (als String) → {"name": <str>} falls vorhanden, sonst leeres Dict.
+        VLAN-ID (str) → {"name": <str>(optional) } 
     """
+   
     vlan_data = {}
     current_vlans = []
     current_name = None
