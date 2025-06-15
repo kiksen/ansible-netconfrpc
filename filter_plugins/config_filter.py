@@ -11,6 +11,10 @@ class FilterModule(object):
 
 
 def extract_interfaces(config_content):
+    """
+    Gets a Cisco configuration file (as string with \n after each line or as list) and returns all interfaces and their configuration as dictionary.
+    Each interface name like GigabitEthernet3 is a key and all configuration lines will be returned as value.
+    """
     interfaces = {}
     current_interface = None
 
@@ -37,6 +41,7 @@ def extract_block(config_content, startblock, endblock):
     Extracts a block conf configuration from config_content.
     startblock defines the start of the block
     endblock defines the end of the block
+    The block is returned as list.
     """
     block = []
     blockstarted = False
