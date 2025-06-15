@@ -12,6 +12,7 @@ Available roles:
 - [block configuration](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#blockconfig)
 - [global configuration](https://github.com/kiksen/ansible-netconfrfc?tab=readme-ov-file#globalconfig)
 - [interfaces](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#interface)
+- [vlans](https://github.com/kiksen/ansible-netconfrfc/blob/main/README.md#vlan-configuration)
 
 ## Device configuration
 You need a user which has priviledge level 15. SSH needs to be enabled. netconf is used via port 22 using 'netconf' subsystem.
@@ -361,6 +362,59 @@ This role is used to manage and apply interface-level configurations on network 
 
 ## Description
 This Ansible module allows you to write or remove VLANs from your device..
+
+## Example
+The following example will add vlan 100,200, 555 and 888. Exisitng vlans will remain unchached. 200 and 1000 will be removed.
+```
+    - name: Get running configuration
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - name: Change vlans
+      vars:
+        current_configuration: "{{ netconfrpc_result.stdout_lines }}"
+        debug: true
+        add_vlans:
+          - vlan_id: 100
+            name: Office
+          - vlan_id: 200
+            name: Data
+          - vlan_id: 555
+            name: Management
+          - vlan_id: 888
+            name: secret
+        remove_vlans:
+          - 200
+          - 1000
+      include_role:
+        name: netconfrpc/vlans
+```
+
+This example will add vlan 100, 200, 555 and 888 and remove all other vlans which are found on the device (except vlan1).
+```
+    - name: Get running configuration
+      include_role:
+        name: netconfrpc/getConfiguration
+
+    - name: Change vlans
+      vars:
+        current_configuration: "{{ netconfrpc_result.stdout_lines }}"
+        debug: true
+        add_vlans:
+          - vlan_id: 100
+            name: Office
+          - vlan_id: 200
+            name: Data
+          - vlan_id: 555
+            name: Management
+          - vlan_id: 888
+            name: secret
+        replace: true
+      include_role:
+        name: netconfrpc/vlans
+```
+
+```
 
 ## Options
 
