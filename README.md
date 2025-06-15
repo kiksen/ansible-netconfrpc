@@ -65,6 +65,8 @@ netconf
         * tasks
         * vars
 
+## Handlers
+If a role does a change a handler named "Write running config" will be notified. Each role has a handlers file which safes the running configuration.
 
 # Roles
 
