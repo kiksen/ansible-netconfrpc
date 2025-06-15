@@ -79,27 +79,19 @@ def extract_vlans(config_lines):
 
 def find_vlans_to_change(current_vlans, vlans_toChange):
     """
-    Mit der Funktion wird geguckt welche Vlans noch angelegt oder verändert werden müssen.
-
-    Prüft, welche VLAN-IDs aus einer gegebenen Liste im result-Dictionary vorhanden sind.
-
-    Diese Funktion durchsucht die übergebene Liste von VLAN-IDs und prüft,
-    ob jede dieser IDs als Key im result-Dictionary existiert.
-    Es wird nur die Existenz der VLAN-ID überprüft – der VLAN-Name wird ignoriert.
 
     Parameter:
     ----------
-    vlan_ids : list of str
-        Eine Liste von VLAN-IDs, die überprüft werden sollen (z.B. ['100', '200']).
+    current_vlans -> dict:
+        each vlan ID is a key (str) and has a dict like { 'name': 'Office' } as value.
 
-    result : dict
-        Ein Dictionary, das VLAN-IDs als Keys enthält.
-        Die Werte können z. B. {'name': 'some_name'} sein oder leer.
+    vlans_toChange -> list of dicts:
+        each entry looks like: { 'vlan_id': 100, 'name': 'Office' }
 
-    Rückgabewert:
-    -------------
-    list of str
-        Eine Liste von VLAN-IDs, die im result-Dictionary vorhanden sind.
+    return value -> list of dicts:
+        each entry looks like: { 'vlan_id': 100, 'name': 'Office' }
+        It contains all vlans which are not present or the name needs to be changed.
+
     """
     missing = []
 
@@ -108,12 +100,12 @@ def find_vlans_to_change(current_vlans, vlans_toChange):
         vlan_id = vlan.get("vlan_id")
         name = vlan.get("name")
 
-        # Prüfen, ob die VLAN-ID existiert
+        # check if van_id exists
         if vlan_id not in current_vlans:
             missing.append(vlan)
             continue
 
-        # Prüfen, ob der Name übereinstimmt
+        # check if the name is equal
         current_vlans_entry = current_vlans[vlan_id]
         current_vlans_name = current_vlans_entry.get("name")
 
@@ -125,22 +117,18 @@ def find_vlans_to_change(current_vlans, vlans_toChange):
 
 def find_vlans_to_remove(current_vlans, vlan_ids):
     """
-    Diese funktion wird dazu verwendet um zu gucken welche Vlans noch gelöscht werden müssen
-    damit keine Vlans gelöscht werden die nicht existieren
-
-    Prüft, welche VLAN-IDs aus der liste vlans_ids im current_vlans dictionaray nicht als key vorhanden sind.
+    This function identifies the VLANs that still require deletion, ensuring that only existing VLANs are removed and preventing the deletion of non-existent VLANs.
 
     Parameter:
     ----------
+    current_vlans -> dict:
+        each vlan ID is a key (str) and has a dict like { 'name': 'Office' } as value.
+
     vlan_ids : list of str or int
-        Eine Liste von VLAN-IDs als Integer oder String
+        A list of integer or string values: [100, 200, 300]
 
     result : list
-        Eine Liste mit vlan IDs als integer
-    Rückgabewert:
-    -------------
-    list of str
-        Eine Liste von VLAN-IDs, die im result-Dictionary vorhanden sind.
+        A list of vlan_ids as integer [100, 200, 300]
     """
     existing = []
 
@@ -153,8 +141,8 @@ def find_vlans_to_remove(current_vlans, vlan_ids):
 
 def find_vlans_to_remove_replace(current_vlans, vlans_toChange):
     """
-    Erzeugt die Differenz zwischen current_Vlans (dict) und den Vlans die hinzugefügt werden sollen.
-    Damit erhält man die Vlans die noch auf dem Device sind, die aber nach dem Merge nicht mehr da sein sollen.
+    Calculates the difference between the current VLANs (dict) and the VLANs to be added.
+    This yields the VLANs that are currently on the device but should no longer be present after the merge
     """
     add_vlan_ids = {str(vlan["vlan_id"]) for vlan in vlans_toChange}
     missing_ids = [vlan_id for vlan_id in current_vlans if vlan_id not in add_vlan_ids]
