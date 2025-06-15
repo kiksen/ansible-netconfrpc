@@ -28,8 +28,18 @@ netconf
 
 This role retrieves the complete device configuration. The result will be stored in the netconfrpc_result. Additionally, it is possible to specify a list of show commands to be retrieved in a single request from the device. The results of these commands will be stored in show_result.
 
-### Options
+### Example
+```
+    - name: Get Config from device
+      vars:
+        show_commands: <- show commands are optional
+          - version
+          - inventory
+      include_role:
+        name: netconfrpc/getConfiguration
+```
 
+### Options
 #### `type`
 
 - **Required**: No  
@@ -64,21 +74,9 @@ getConfiguration will return 'netconfrpc_result' which has the following fields:
 
 
 
-### Example
-```
-    - name: Get Config from device
-      vars:
-        show_commands: <- show commands are optional
-          - version
-          - inventory
-      include_role:
-        name: netconfrpc/getConfiguration
-```
-
 ## allowed configuration
 
 ### Description
-
 This role removes unwanted configuration elements such as users, NTP servers, or RADIUS configurations.
 
 A regular expression (regex pattern) is used to extract the relevant part of each configuration line to generate a corresponding `no` command for removal.  
@@ -89,37 +87,6 @@ For example:
 - Resulting command: `no username Cisco`  
 
 **Important:** The regex must match the entire line.
-
-### Options
-
-#### `pattern`
-
-- **Type**: String  
-- **Required**: Yes  
-- **Description**:  
-  A regex pattern used to extract the relevant configuration lines for removal. The pattern must contain exactly one capturing group.
-
-#### `allowed`
-
-- **Type**: List of strings  
-- **Required**: No  
-- **Description**:  
-  A list of allowed configuration entries. These must exactly match the captured group from the pattern (e.g., `username Cisco`).
-  If you don't use allowed, all found lines will be removed. See examples.
-
-#### `current_config`
-
-- **Type**: List of strings  
-- **Required**: Yes  
-- **Description**:  
-  The current full device configuration as a list of strings.
-
-#### `debug`
-
-- **Type**: Boolean  
-- **Required**: No  
-- **Description**:  
-  Enables debug output for troubleshooting.
 
 ### Example
 The following playbook will delete Legacy_Unix1 and Legacy_Unix2 and keep ISE1 and ISE2.
@@ -157,40 +124,37 @@ These example shows how to remove all snmpv2 configurations from a device to ens
         name: netconfrpc/allowedConfig
 ```
 
+### Options
+#### `pattern`
+- **Type**: String  
+- **Required**: Yes  
+- **Description**:  
+  A regex pattern used to extract the relevant configuration lines for removal. The pattern must contain exactly one capturing group.
+
+#### `allowed`
+- **Type**: List of strings  
+- **Required**: No  
+- **Description**:  
+  A list of allowed configuration entries. These must exactly match the captured group from the pattern (e.g., `username Cisco`).
+  If you don't use allowed, all found lines will be removed. See examples.
+
+#### `current_config`
+- **Type**: List of strings  
+- **Required**: Yes  
+- **Description**:  
+  The current full device configuration as a list of strings.
+
+#### `debug`
+- **Type**: Boolean  
+- **Required**: No  
+- **Description**:  
+  Enables debug output for troubleshooting.
+
+
 # blockConfig
 
 **Description**  
 This role makes sure all lines from a block of configuration is present or removed. This role can be used for access lists or any other block of configuration lines. It doesn't need to be an indented block of config like access-lists or class-maps.
-
-## Optionen
-
-#### start_block
-- **Required:** Yes 
-- **Description:**
-  A line of configuration to start a config block: `ip access-list standard MGMT`
-
-#### end_block
-- **Required:** Yes  
-- **Description:**
-  A line of configuration to end a config block: `!`
-
-#### before
-- **Typ:** list (str)  
-- **Required:** No  
-- **Description:**  
-  Commands you need to fix things up like deleting an access-list completely
-
-#### default_config
-- **Typ:** list (str)  
-- **Required:** No  
-- **Description:**  
-  A list of commands which are not visible in the final configuration
-
-#### current_config
-- **Typ:** list (str)  
-- **Required:** Yes
-- **Description:**  
-  Your current complete device config as list of strings.
 
 ### Example
 The following example will create an access-list MGMT. If the list exists and if lines are different it will be removed by 'before' command and recreated.
@@ -236,9 +200,52 @@ You want to replace 102 by 101. If you don't use default_config you will end up 
         name: netconfrpc/blockConfig
 ```
 
+## Optionen
+#### start_block
+- **Required:** Yes 
+- **Description:**
+  A line of configuration to start a config block: `ip access-list standard MGMT`
+
+#### end_block
+- **Required:** Yes  
+- **Description:**
+  A line of configuration to end a config block: `!`
+
+#### before
+- **Typ:** list (str)  
+- **Required:** No  
+- **Description:**  
+  Commands you need to fix things up like deleting an access-list completely
+
+#### default_config
+- **Typ:** list (str)  
+- **Required:** No  
+- **Description:**  
+  A list of commands which are not visible in the final configuration
+
+#### current_config
+- **Typ:** list (str)  
+- **Required:** Yes
+- **Description:**  
+  Your current complete device config as list of strings.
+
 # globalConfig
 **Description**
 Send global config commands to the device.
+
+## Example
+The following example sends two lines of configuration to the device. If they are found nothing is changed or done.
+```
+    - name: Send configuration lines to device
+      vars:
+        intended_config:
+          - snmp-server community insecure RO
+          - hostname netconfIsCoolxxx
+        current_config: "{{ full_config }}"
+        debug: true
+      include_role:
+        name: netconfrpc/globalConfig
+```
 
 ## Options
 ### before
@@ -277,28 +284,39 @@ Send global config commands to the device.
 - **Default:** false
 - **Description:** Print more information when executing.
 
-## Example
-
-```
-    - name: Send configuration lines to device
-      vars:
-        intended_config:
-          - snmp-server community insecure RO
-          - hostname netconfIsCoolxxx
-        current_config: "{{ full_config }}"
-        debug: true
-      include_role:
-        name: netconfrpc/globalConfig
-```
-
 # interface
 
 ## Description
-
 This role is used to manage and apply interface-level configurations on network devices. It can analyze current configurations, identify required changes, and apply the desired configuration state reliably.
 
-## Options
+## Example
+```
+    - name: Get Device configuration including interfaces and vlans
+      include_role:
+        name: netconfrpc/getConfiguration
+    # will return netconffpc_result
 
+    - name: Set Interface Configuration to Trunk
+      vars:
+        default_interface: true
+        name: GigabitEthernet4
+        current_config: "{{ netconfrpc_result.interfaces[name] }}"        
+        intended_config:
+        - description Switch1-to-Switch2
+        - switchport mode trunk
+        - switchport trunk allowed vlan 55,100,200,300
+        - negotiation auto
+        default_config:
+          - switchport trunk native vlan 1
+          - logging event link-status
+          - mop enabled
+          - mop sysid
+        debug: true
+      include_role:
+        name: netconfrpc/interface
+```
+
+## Options
 ### name
 - **Type**: `str`
 - **Required**: Yes  
@@ -330,36 +348,7 @@ This role is used to manage and apply interface-level configurations on network 
   Lines that are not visible after being sent to the configuration. These are usually default commands like `logging event link-status`.  
   If you don't want logging, you need to add `no logging event link-status` to `target_config`, since you will see it in the running configuration.
 
-### Example
-```
-    - name: Get Device configuration including interfaces and vlans
-      include_role:
-        name: netconfrpc/getConfiguration
-    # will return netconffpc_result
-
-    - name: Set Interface Configuration to Trunk
-      vars:
-        default_interface: true
-        name: GigabitEthernet4
-        current_config: "{{ netconfrpc_result.interfaces[name] }}"        
-        intended_config:
-        - description Switch1-to-Switch2
-        - switchport mode trunk
-        - switchport trunk allowed vlan 55,100,200,300
-        - negotiation auto
-        default_config:
-          - switchport trunk native vlan 1
-          - logging event link-status
-          - mop enabled
-          - mop sysid
-        debug: true
-      include_role:
-        name: netconfrpc/interface
-```
-
-
 # vlan configuration
-
 ## Description
 This Ansible module allows you to write or remove VLANs from your device..
 
@@ -414,17 +403,12 @@ This example will add vlan 100, 200, 555 and 888 and remove all other vlans whic
         name: netconfrpc/vlans
 ```
 
-```
-
 ## Options
-
 ### `current_config`
 - **Type**: string  
 - **Required**: No  
 - **Description**:  
   Complete device configuration including all VLANs.
-
----
 
 ### `add_vlans`
 - **Type**: list  
