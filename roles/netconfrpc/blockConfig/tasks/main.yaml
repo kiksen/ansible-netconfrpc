@@ -37,9 +37,13 @@
     before_list: "{{ before }}"
   when: before | type_debug == 'list'
 
+- debug:
+    msg:
+      - "{{ before_list | type_debug }}"
+
 - name: prepare push_stack = before + start_block + intended_config + default_config
   set_fact:
-    push_stack: "{{ before + [ start_block ] + intended_config + default_config }}"
+    push_stack: "{{ before_list + [ start_block ] + intended_config + default_config }}"
 
 - name: debug push_stack
   debug:

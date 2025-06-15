@@ -1,6 +1,7 @@
 commands: []
 before: []
 current_config: None
+intended_config: []
 block_start: None
 block_end: !
 push_stack: []

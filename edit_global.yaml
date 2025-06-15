@@ -15,8 +15,6 @@
 
   tasks:
 
-
-
     - name: Get running configuration
       include_role:
         name: netconfrpc/getConfiguration
@@ -45,8 +43,3 @@
         debug: true
       include_role:
         name: netconfrpc/globalConfig
-
-
-
-
-

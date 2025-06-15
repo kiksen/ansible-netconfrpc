@@ -37,20 +37,20 @@
         name: netconfrpc/blockConfig
 
 
-    - name: Route-map
-      vars:
-        start_block: route-map TEST permit 10
-        end_block: '!'
-        before:
-          - '!'
-        intended_config:
-          - match ip address 102
-          - set tag 123
-        default_config:
-          - no match ip address 101
-        current_config: "{{ full_config }}"
-        debug: false
-      include_role:
-        name: netconfrpc/blockConfig
+    # - name: Route-map
+    #   vars:
+    #     start_block: route-map TEST permit 10
+    #     end_block: '!'
+    #     before:
+    #       - '!'
+    #     intended_config:
+    #       - match ip address 102
+    #       - set tag 123
+    #     default_config:
+    #       - no match ip address 101
+    #     current_config: "{{ full_config }}"
+    #     debug: false
+    #   include_role:
+    #     name: netconfrpc/blockConfig
 
 
