@@ -27,43 +27,43 @@ netconf
 - All roles provide a debug option that enables detailed output for troubleshooting purposes."
 
 ## Directory Structure
-......\ANSIBLE-NETCONFRFC
-├───filter_plugins
-│   └───__pycache__
-└───roles
-    └───netconfrpc
-        ├───allowedConfig
-        │   ├───handlers
-        │   ├───meta
-        │   ├───tasks
-        │   └───vars
-        ├───blockConfig
-        │   ├───handlers
-        │   ├───meta
-        │   ├───tasks
-        │   └───vars
-        ├───getConfiguration
-        │   ├───meta
-        │   ├───tasks
-        │   └───vars
-        ├───globalConfig
-        │   ├───handlers
-        │   ├───meta
-        │   ├───tasks
-        │   └───vars
-        ├───interface
-        │   ├───handlers
-        │   ├───meta
-        │   ├───tasks
-        │   └───vars
-        ├───saveConfig
-        │   ├───meta
-        │   └───tasks
-        └───vlans
-            ├───handlers
-            ├───meta
-            ├───tasks
-            └───vars
+
+* ....\ANSIBLE\ANSIBLE-NETCONFRFC
+  * filter_plugins
+  * roles
+    * netconfrpc
+      * allowedConfig
+        * handlers
+        * meta
+        * tasks
+        * vars
+      * blockConfig
+        * handlers
+        * meta
+        * tasks
+        * vars
+      * getConfiguration
+        * meta
+        * tasks
+        * vars
+      * globalConfig
+        * handlers
+        * meta
+        * tasks
+        * vars
+      * interface
+        * handlers
+        * meta
+        * tasks
+        * vars
+      * saveConfig
+        * meta
+        * tasks
+      * vlans
+        * handlers
+        * meta
+        * tasks
+        * vars
 
 
 # Roles
